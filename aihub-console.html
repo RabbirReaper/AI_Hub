@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>AIHub 工作台</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;600;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  html { -webkit-text-size-adjust: 100%; }
+  :root {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<style>
+  :root {
+    --bg: #eef1f5;
+    --surface: #ffffff;
+    --surface-2: #f7f9fb;
+    --line: #d3dae3;
+    --line-soft: #e4e9ef;
+    --ink: #1a2029;
+    --ink-2: #4e5a6a;
+    --ink-3: #7d8899;
+    --accent: #1f5f8b;
+    --accent-ink: #ffffff;
+    --accent-soft: #e2edf4;
+    --warm: #c0632a;
+    --warm-soft: #f6e9df;
+    --ok: #2f7d55;
+    --bad: #b3373a;
+    --bad-soft: #f8e4e4;
+    --shadow: 0 1px 2px rgba(26, 32, 41, .06), 0 8px 24px -16px rgba(26, 32, 41, .3);
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: "Noto Sans TC", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --display: "Chivo", "Noto Sans TC", system-ui, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #11151b;
+      --surface: #192029;
+      --surface-2: #1f2730;
+      --line: #313c49;
+      --line-soft: #262f3a;
+      --ink: #e7ecf2;
+      --ink-2: #a7b3c2;
+      --ink-3: #788697;
+      --accent: #64a8d8;
+      --accent-ink: #0d1319;
+      --accent-soft: #1d2d3a;
+      --warm: #e2905a;
+      --warm-soft: #33251b;
+      --ok: #5cb98a;
+      --bad: #e47174;
+      --bad-soft: #35211f;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px -18px rgba(0, 0, 0, .9);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #11151b;
+    --surface: #192029;
+    --surface-2: #1f2730;
+    --line: #313c49;
+    --line-soft: #262f3a;
+    --ink: #e7ecf2;
+    --ink-2: #a7b3c2;
+    --ink-3: #788697;
+    --accent: #64a8d8;
+    --accent-ink: #0d1319;
+    --accent-soft: #1d2d3a;
+    --warm: #e2905a;
+    --warm-soft: #33251b;
+    --ok: #5cb98a;
+    --bad: #e47174;
+    --bad-soft: #35211f;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px -18px rgba(0, 0, 0, .9);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button, input, select, textarea { font: inherit; color: inherit; }
+
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+  /* ---------- 版面骨架 ---------- */
+  .shell {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding-inline: 16px;
+    padding-block: 20px 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .masthead {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .brand h1 {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(22px, 4vw, 30px);
+    letter-spacing: -.02em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .brand p {
+    margin: 2px 0 0;
+    color: var(--ink-3);
+    font-size: 13px;
+    font-family: var(--mono);
+  }
+
+  .masthead-side { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+  .keychip {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-2);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-3); flex: none; }
+  .dot.live { background: var(--ok); }
+  .dot.down { background: var(--bad); }
+
+  .ghost-btn {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 13px;
+    font-size: 12.5px;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: border-color .15s, color .15s;
+  }
+  .ghost-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .workbench { display: grid; grid-template-columns: 208px minmax(0, 1fr); gap: 18px; align-items: start; }
+
+  /* ---------- 功能軌 ---------- */
+  nav.rail { display: flex; flex-direction: column; gap: 2px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); }
+
+  .rail-label {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding: 0 10px 8px;
+  }
+
+  .rail button {
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: 0;
+    border-left: 2px solid transparent;
+    padding: 8px 10px;
+    cursor: pointer;
+    color: var(--ink-2);
+    border-radius: 0 6px 6px 0;
+    transition: background .14s, color .14s, border-color .14s;
+  }
+
+  .rail button:hover { background: var(--surface); color: var(--ink); }
+
+  .rail button[aria-selected="true"] {
+    background: var(--surface);
+    border-left-color: var(--accent);
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .rail .idx { font-family: var(--mono); font-size: 11px; color: var(--ink-3); flex: none; }
+  .rail button[aria-selected="true"] .idx { color: var(--accent); }
+
+  /* ---------- 面板 ---------- */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .panel-head {
+    padding: 15px 18px;
+    border-bottom: 1px solid var(--line-soft);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .panel-head h2 {
+    margin: 0;
+    font-family: var(--display);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -.01em;
+  }
+
+  .endpoint {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ink-3);
+    background: var(--surface-2);
+    border: 1px solid var(--line-soft);
+    padding: 2px 8px;
+    border-radius: 5px;
+    white-space: nowrap;
+    overflow-x: auto;
+    max-width: 100%;
+  }
+
+  .panel-body { padding: 18px; display: flex; flex-direction: column; gap: 16px; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+
+  .field > label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-2);
+    letter-spacing: .02em;
+  }
+
+  .hint { font-size: 11.5px; color: var(--ink-3); line-height: 1.5; }
+
+  input[type="text"], input[type="number"], select, textarea {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 9px 11px;
+    width: 100%;
+    transition: border-color .15s;
+  }
+
+  input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  textarea { resize: vertical; min-height: 84px; font-family: inherit; line-height: 1.6; }
+  textarea.code { font-family: var(--mono); font-size: 13px; }
+
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .row > .field { flex: 1 1 180px; }
+
+  .actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+  .primary-btn {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border: 0;
+    border-radius: 7px;
+    padding: 10px 20px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: filter .15s;
+  }
+  .primary-btn:hover:not(:disabled) { filter: brightness(1.1); }
+  .primary-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  .flat-btn {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 9px 15px;
+    cursor: pointer;
+    color: var(--ink-2);
+    transition: border-color .15s, color .15s;
+  }
+  .flat-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .flat-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+  .toggle { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-2); cursor: pointer; }
+  .toggle input { accent-color: var(--accent); width: 15px; height: 15px; }
+
+  .status {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-3);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 20px;
+  }
+  .status.err { color: var(--bad); }
+  .status.ok { color: var(--ok); }
+
+  .spinner {
+    width: 11px; height: 11px;
+    border: 2px solid var(--line);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    flex: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    .spinner { animation-duration: 2.4s; }
+    * { scroll-behavior: auto !important; }
+  }
+
+  .errbox {
+    background: var(--bad-soft);
+    border: 1px solid var(--bad);
+    border-radius: 7px;
+    padding: 11px 13px;
+    font-size: 13px;
+    color: var(--bad);
+    font-family: var(--mono);
+    word-break: break-word;
+    line-height: 1.55;
+  }
+
+  /* ---------- 對話 ---------- */
+  .thread {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-height: 46vh;
+    min-height: 150px;
+    overflow-y: auto;
+    padding: 4px 2px;
+    scroll-behavior: smooth;
+  }
+
+  .msg { display: flex; flex-direction: column; gap: 5px; }
+
+  .msg .who {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .msg .bubble {
+    border-radius: 9px;
+    padding: 10px 13px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.65;
+  }
+
+  .msg.user .bubble { background: var(--accent-soft); border: 1px solid var(--line-soft); }
+  .msg.assistant .bubble { background: var(--surface-2); border: 1px solid var(--line-soft); }
+  .msg.system .bubble { background: var(--warm-soft); border: 1px solid var(--line-soft); font-size: 13.5px; }
+
+  details.reasoning {
+    background: var(--surface-2);
+    border: 1px dashed var(--line);
+    border-radius: 7px;
+    padding: 8px 11px;
+    font-size: 12.5px;
+    color: var(--ink-2);
+  }
+  details.reasoning summary {
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  details.reasoning .think { margin-top: 7px; white-space: pre-wrap; line-height: 1.6; opacity: .85; }
+
+  .empty {
+    color: var(--ink-3);
+    font-size: 13px;
+    text-align: center;
+    padding: 28px 12px;
+    border: 1px dashed var(--line);
+    border-radius: 8px;
+  }
+
+  /* ---------- 結果區 ---------- */
+  .result-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  pre.out {
+    background: var(--surface-2);
+    border: 1px solid var(--line-soft);
+    border-radius: 7px;
+    padding: 12px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.6;
+    margin: 0;
+    max-height: 340px;
+    overflow-y: auto;
+  }
+
+  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  .gallery figure { margin: 0; display: flex; flex-direction: column; gap: 7px; }
+  .gallery img {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    display: block;
+  }
+  .gallery figcaption { font-size: 11.5px; color: var(--ink-3); font-family: var(--mono); }
+
+  audio { width: 100%; }
+
+  .rank { display: flex; flex-direction: column; gap: 9px; }
+  .rank-item { display: flex; flex-direction: column; gap: 5px; }
+  .rank-top { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+  .rank-text { font-size: 13.5px; min-width: 0; word-break: break-word; }
+  .rank-score { font-family: var(--mono); font-size: 12px; color: var(--accent); font-variant-numeric: tabular-nums; flex: none; }
+  .bar { height: 5px; background: var(--line-soft); border-radius: 3px; overflow: hidden; }
+  .bar span { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
+
+  .vec-stats { display: flex; gap: 20px; flex-wrap: wrap; font-family: var(--mono); font-size: 12.5px; }
+  .vec-stats div { display: flex; flex-direction: column; gap: 1px; }
+  .vec-stats .k { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+  .vec-stats .v { font-size: 15px; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+  .model-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .model-table th, .model-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line-soft); }
+  .model-table th {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 400;
+  }
+  .model-table td.id { font-family: var(--mono); font-size: 12.5px; }
+  .tablewrap { overflow-x: auto; }
+
+  .tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    padding: 1px 7px;
+    border-radius: 4px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid var(--line-soft);
+  }
+  .tag.warm { background: var(--warm-soft); color: var(--warm); }
+
+  .filedrop {
+    border: 1px dashed var(--line);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    color: var(--ink-3);
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color .15s, color .15s;
+    background: var(--surface-2);
+  }
+  .filedrop:hover, .filedrop.over { border-color: var(--accent); color: var(--accent); }
+  .filedrop strong { color: var(--ink); font-weight: 500; }
+
+  @media (max-width: 760px) {
+    .workbench { grid-template-columns: 1fr; }
+    nav.rail {
+      position: static;
+      flex-direction: row;
+      overflow-x: auto;
+      gap: 4px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--line);
+    }
+    .rail-label { display: none; }
+    .rail button {
+      border-left: 0;
+      border-bottom: 2px solid transparent;
+      border-radius: 6px 6px 0 0;
+      white-space: nowrap;
+      padding: 7px 12px;
+    }
+    .rail button[aria-selected="true"] { border-bottom-color: var(--accent); }
+    .thread { max-height: 52vh; }
+  }
+</style>
+
+<div class="shell">
+  <header class="masthead">
+    <div class="brand">
+      <h1>AIHub 工作台</h1>
+      <p>iai.nkust.edu.tw/aihub &middot; v1</p>
+    </div>
+    <div class="masthead-side">
+      <span class="keychip"><span class="dot" id="healthDot"></span><span id="healthText">尚未連線</span></span>
+      <button class="ghost-btn" id="themeBtn" type="button">切換深淺</button>
+    </div>
+  </header>
+
+  <div class="workbench">
+    <nav class="rail" role="tablist" aria-label="功能">
+      <div class="rail-label">端點</div>
+      <button role="tab" type="button" data-view="chat" aria-selected="true"><span class="idx">01</span>對話</button>
+      <button role="tab" type="button" data-view="image" aria-selected="false"><span class="idx">02</span>影像生成</button>
+      <button role="tab" type="button" data-view="asr" aria-selected="false"><span class="idx">03</span>語音轉文字</button>
+      <button role="tab" type="button" data-view="tts" aria-selected="false"><span class="idx">04</span>文字轉語音</button>
+      <button role="tab" type="button" data-view="embed" aria-selected="false"><span class="idx">05</span>向量化</button>
+      <button role="tab" type="button" data-view="rerank" aria-selected="false"><span class="idx">06</span>重排序</button>
+      <button role="tab" type="button" data-view="models" aria-selected="false"><span class="idx">07</span>模型清單</button>
+    </nav>
+
+    <main>
+      <!-- 01 對話 -->
+      <section class="panel" data-panel="chat">
+        <div class="panel-head">
+          <h2>對話</h2>
+          <code class="endpoint">POST /v1/chat/completions</code>
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="field">
+              <label for="chatModel">模型</label>
+              <select id="chatModel"></select>
+            </div>
+            <div class="field">
+              <label for="chatTemp">溫度</label>
+              <input type="number" id="chatTemp" min="0" max="2" step="0.1" value="0.7">
+            </div>
+            <div class="field">
+              <label for="chatMaxTokens">最大輸出 token</label>
+              <input type="number" id="chatMaxTokens" min="1" step="64" placeholder="留空用預設">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="chatSystem">系統提示（選填）</label>
+            <textarea id="chatSystem" rows="2" placeholder="例如：你是高科大的課程助教，回答一律用繁體中文。"></textarea>
+          </div>
+
+          <div class="thread" id="thread" aria-live="polite"></div>
+
+          <div class="field">
+            <label for="chatInput">訊息</label>
+            <textarea id="chatInput" rows="3" placeholder="輸入訊息後按 Ctrl + Enter 送出"></textarea>
+          </div>
+
+          <div class="actions">
+            <button class="primary-btn" id="chatSend" type="button">送出</button>
+            <button class="flat-btn" id="chatStop" type="button" disabled>停止</button>
+            <button class="flat-btn" id="chatClear" type="button">清空對話</button>
+            <label class="toggle"><input type="checkbox" id="chatStream" checked>串流輸出</label>
+            <span class="status" id="chatStatus"></span>
+          </div>
+          <p class="hint">對話會帶入完整歷史訊息。部分模型（如 Furen-large）會回傳推理過程，介面會收在「思考過程」摺疊區，不混入正式回覆。</p>
+        </div>
+      </section>
+
+      <!-- 02 影像生成 -->
+      <section class="panel" data-panel="image" hidden>
+        <div class="panel-head">
+          <h2>影像生成</h2>
+          <code class="endpoint">POST /v1/images/generations</code>
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="field">
+              <label for="imgModel">模型</label>
+              <select id="imgModel"></select>
+            </div>
+            <div class="field">
+              <label for="imgCount">張數</label>
+              <input type="number" id="imgCount" min="1" max="4" value="1">
+            </div>
+            <div class="field">
+              <label for="imgSize">尺寸</label>
+              <select id="imgSize">
+                <option>512x512</option>
+                <option selected>1024x1024</option>
+                <option>1024x768</option>
+                <option>768x1024</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="imgPrompt">提示詞</label>
+            <textarea id="imgPrompt" rows="3">高雄港黃昏，貨櫃船與起重機剪影，暖色調，數位插畫</textarea>
+          </div>
+          <div class="actions">
+            <button class="primary-btn" id="imgRun" type="button">生成圖片</button>
+            <span class="status" id="imgStatus"></span>
+          </div>
+          <div id="imgOut"></div>
+          <p class="hint">回傳為 base64，圖片在瀏覽器內解碼顯示。要保存請在圖片上按右鍵另存。</p>
+        </div>
+      </section>
+
+      <!-- 03 語音轉文字 -->
+      <section class="panel" data-panel="asr" hidden>
+        <div class="panel-head">
+          <h2>語音轉文字</h2>
+          <code class="endpoint">POST /v1/audio/transcriptions</code>
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="field">
+              <label for="asrModel">模型</label>
+              <select id="asrModel"></select>
+            </div>
+            <div class="field">
+              <label for="asrLang">語言</label>
+              <select id="asrLang">
+                <option value="zh" selected>中文 zh</option>
+                <option value="en">英文 en</option>
+                <option value="ja">日文 ja</option>
+                <option value="">自動偵測</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="asrFile">音檔或影片</label>
+            <div class="filedrop" id="asrDrop">
+              <strong>點此選擇檔案</strong>或直接拖曳到這裡<br>
+              <span id="asrFileName">音檔 mp3、wav、m4a；影片 mp4、mov、webm</span>
+            </div>
+            <input type="file" id="asrFile" accept="audio/*,video/*" hidden>
+          </div>
+
+          <div class="actions">
+            <button class="primary-btn" id="asrRun" type="button">開始轉寫</button>
+            <label class="toggle"><input type="checkbox" id="asrTrad" checked>結果轉繁體</label>
+            <span class="status" id="asrStatus"></span>
+          </div>
+          <div id="asrOut"></div>
+          <p class="hint">服務端只收音檔，不吃影片。選影片時，瀏覽器會先在本機抽出音軌轉成 wav 再上傳，長片處理需要一些時間。ASR 模型輸出為簡體，預設已自動轉繁體。</p>
+        </div>
+      </section>
+
+      <!-- 04 文字轉語音 -->
+      <section class="panel" data-panel="tts" hidden>
+        <div class="panel-head">
+          <h2>文字轉語音</h2>
+          <code class="endpoint">POST /v1/audio/speech</code>
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="field">
+              <label for="ttsModel">模型</label>
+              <select id="ttsModel"></select>
+            </div>
+            <div class="field">
+              <label for="ttsVoice">語者</label>
+              <input type="text" id="ttsVoice" value="taiwan_girl">
+            </div>
+            <div class="field">
+              <label for="ttsFormat">輸出格式</label>
+              <select id="ttsFormat">
+                <option value="mp3" selected>mp3</option>
+                <option value="wav">wav</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="ttsInput">文字內容</label>
+            <textarea id="ttsInput" rows="3">各位同學好，這裡是高科大人工智慧服務平台的語音測試。</textarea>
+          </div>
+          <div class="actions">
+            <button class="primary-btn" id="ttsRun" type="button">合成語音</button>
+            <span class="status" id="ttsStatus"></span>
+          </div>
+          <div id="ttsOut"></div>
+          <p class="hint">語者名稱依服務支援為準，taiwan_girl 為文件範例值。</p>
+        </div>
+      </section>
+
+      <!-- 05 向量化 -->
+      <section class="panel" data-panel="embed" hidden>
+        <div class="panel-head">
+          <h2>向量化</h2>
+          <code class="endpoint">POST /v1/embeddings</code>
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="field">
+              <label for="embModel">模型</label>
+              <select id="embModel"></select>
+            </div>
+            <div class="field">
+              <label for="embFormat">編碼格式</label>
+              <select id="embFormat">
+                <option value="float" selected>float</option>
+                <option value="base64">base64</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="embInput">輸入文字</label>
+            <textarea id="embInput" class="code" rows="4" placeholder="一行一筆，多行會一次送出多筆">機器學習是人工智慧的一個分支
+深度學習使用神經網路</textarea>
+            <span class="hint">每行視為一筆文字。兩筆以上時會額外計算彼此的餘弦相似度。</span>
+          </div>
+          <div class="actions">
+            <button class="primary-btn" id="embRun" type="button">產生向量</button>
+            <span class="status" id="embStatus"></span>
+          </div>
+          <div id="embOut"></div>
+        </div>
+      </section>
+
+      <!-- 06 重排序 -->
+      <section class="panel" data-panel="rerank" hidden>
+        <div class="panel-head">
+          <h2>重排序</h2>
+          <code class="endpoint">POST /v1/rerank</code>
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="field">
+              <label for="rrModel">模型</label>
+              <select id="rrModel"></select>
+            </div>
+            <div class="field">
+              <label for="rrTopN">取前幾筆</label>
+              <input type="number" id="rrTopN" min="1" value="3">
+            </div>
+          </div>
+          <div class="field">
+            <label for="rrQuery">查詢字串</label>
+            <input type="text" id="rrQuery" value="什麼是機器學習?">
+          </div>
+          <div class="field">
+            <label for="rrDocs">候選文件</label>
+            <textarea id="rrDocs" class="code" rows="5">機器學習是人工智慧的一個分支
+今天天氣很好
+深度學習使用神經網路
+高雄捷運紅線通往小港機場</textarea>
+            <span class="hint">一行一份文件。</span>
+          </div>
+          <div class="actions">
+            <button class="primary-btn" id="rrRun" type="button">重新排序</button>
+            <span class="status" id="rrStatus"></span>
+          </div>
+          <div id="rrOut"></div>
+        </div>
+      </section>
+
+      <!-- 07 模型清單 -->
+      <section class="panel" data-panel="models" hidden>
+        <div class="panel-head">
+          <h2>模型清單</h2>
+          <code class="endpoint">GET /v1/models</code>
+        </div>
+        <div class="panel-body">
+          <div class="actions">
+            <button class="primary-btn" id="modelsRun" type="button">重新載入</button>
+            <span class="status" id="modelsStatus"></span>
+          </div>
+          <div id="modelsOut"></div>
+          <p class="hint">分類是依模型名稱推測，用來決定各面板的預設選項；若平台新增模型，重新載入後即會出現在下拉選單。</p>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var BASE = "https://www.iai.nkust.edu.tw/aihub/v1";
+  var API_KEY = "sk-D6uT_XsOJ4pCNyirZQ2uQg";
+
+  function authHeaders(extra) {
+    var h = { "Authorization": "Bearer " + API_KEY };
+    if (extra) { for (var k in extra) h[k] = extra[k]; }
+    return h;
+  }
+
+  function $(id) { return document.getElementById(id); }
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
+  }
+  function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+
+  function setStatus(node, text, kind) {
+    clear(node);
+    node.className = "status" + (kind ? " " + kind : "");
+    if (kind === "busy") node.appendChild(el("span", "spinner"));
+    if (text) node.appendChild(document.createTextNode(text));
+  }
+
+  function showError(container, err) {
+    clear(container);
+    container.appendChild(el("div", "errbox", err));
+  }
+
+  // 把各種錯誤回應轉成一句看得懂的話
+  function describeError(res, body) {
+    var detail = "";
+    if (body && typeof body === "object") {
+      if (body.error) detail = body.error.message || body.error.detail || JSON.stringify(body.error);
+      else if (body.detail) detail = typeof body.detail === "string" ? body.detail : JSON.stringify(body.detail);
+      else detail = JSON.stringify(body);
+    } else if (typeof body === "string" && body.trim()) {
+      detail = body.slice(0, 400);
+    }
+    if (res && res.status === 401) return "金鑰未通過驗證（401）。請確認 API 金鑰仍有效。" + (detail ? " " + detail : "");
+    if (res && res.status === 429) return "請求過於頻繁（429），請稍候再試。" + (detail ? " " + detail : "");
+    if (res && res.status >= 500) return "伺服器端錯誤（" + res.status + "），稍後重試。" + (detail ? " " + detail : "");
+    if (res) return "請求失敗（" + res.status + "）。" + (detail ? " " + detail : "");
+    return detail || "請求失敗。";
+  }
+
+  function networkHint(e) {
+    if (e && e.name === "AbortError") return "已取消。";
+    return "無法連線到 AIHub。可能是網路問題，或瀏覽器的跨來源限制擋下了這個請求。";
+  }
+
+  async function postJSON(path, payload, signal) {
+    var res = await fetch(BASE + path, {
+      method: "POST",
+      headers: authHeaders({ "Content-Type": "application/json", "accept": "application/json" }),
+      body: JSON.stringify(payload),
+      signal: signal
+    });
+    var text = await res.text();
+    var data = null;
+    try { data = text ? JSON.parse(text) : null; } catch (_) { data = text; }
+    if (!res.ok) throw new Error(describeError(res, data));
+    return data;
+  }
+
+  /* ---------------- 模型清單 ---------------- */
+
+  var MODELS = [];
+
+  var CATEGORY = {
+    chat: function (id) {
+      return /^(furen-(max|large|std|coder|omni)|nkust)$/i.test(id);
+    },
+    image: function (id) { return /^pic-/i.test(id) || /image/i.test(id); },
+    asr: function (id) { return /^asr$/i.test(id); },
+    tts: function (id) { return /^speaker$/i.test(id); },
+    embed: function (id) { return /embedding/i.test(id); },
+    rerank: function (id) { return /rerank/i.test(id); }
+  };
+
+  function categoryOf(id) {
+    for (var key in CATEGORY) { if (CATEGORY[key](id)) return key; }
+    return "chat";
+  }
+
+  var CATEGORY_LABEL = {
+    chat: "對話", image: "影像", asr: "語音轉文字",
+    tts: "語音合成", embed: "向量", rerank: "重排序"
+  };
+
+  var SELECTS = [
+    { el: "chatModel", cat: "chat", prefer: "Furen-large" },
+    { el: "imgModel", cat: "image", prefer: "Pic-small" },
+    { el: "asrModel", cat: "asr", prefer: "Asr" },
+    { el: "ttsModel", cat: "tts", prefer: "Speaker" },
+    { el: "embModel", cat: "embed", prefer: "Embedding" },
+    { el: "rrModel", cat: "rerank", prefer: "Furen-reranker" }
+  ];
+
+  function fillSelects() {
+    SELECTS.forEach(function (spec) {
+      var sel = $(spec.el);
+      var previous = sel.value;
+      clear(sel);
+      var matching = MODELS.filter(function (m) { return categoryOf(m.id) === spec.cat; });
+      var pool = matching.length ? matching : MODELS;
+      pool.forEach(function (m) {
+        var opt = el("option", null, m.id);
+        opt.value = m.id;
+        sel.appendChild(opt);
+      });
+      if (!pool.length) {
+        var fallback = el("option", null, spec.prefer);
+        fallback.value = spec.prefer;
+        sel.appendChild(fallback);
+      }
+      var want = previous || spec.prefer;
+      var hit = Array.prototype.some.call(sel.options, function (o) { return o.value === want; });
+      sel.value = hit ? want : sel.options[0].value;
+    });
+  }
+
+  function renderModels(list) {
+    var out = $("modelsOut");
+    clear(out);
+    var wrap = el("div", "tablewrap");
+    var table = el("table", "model-table");
+    var thead = el("thead");
+    var hr = el("tr");
+    ["模型", "用途", "提供者"].forEach(function (h) { hr.appendChild(el("th", null, h)); });
+    thead.appendChild(hr);
+    table.appendChild(thead);
+
+    var tbody = el("tbody");
+    list.slice().sort(function (a, b) {
+      var ca = categoryOf(a.id), cb = categoryOf(b.id);
+      if (ca !== cb) return ca.localeCompare(cb);
+      return a.id.localeCompare(b.id);
+    }).forEach(function (m) {
+      var cat = categoryOf(m.id);
+      var tr = el("tr");
+      tr.appendChild(el("td", "id", m.id));
+      var tdCat = el("td");
+      var tag = el("span", cat === "chat" ? "tag" : "tag warm", CATEGORY_LABEL[cat] || cat);
+      tdCat.appendChild(tag);
+      tr.appendChild(tdCat);
+      tr.appendChild(el("td", null, m.owned_by || "—"));
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    wrap.appendChild(table);
+    out.appendChild(wrap);
+  }
+
+  async function loadModels(manual) {
+    var status = $("modelsStatus");
+    setStatus(status, "載入中", "busy");
+    $("healthText").textContent = "連線中";
+    $("healthDot").className = "dot";
+    try {
+      var res = await fetch(BASE + "/models", { headers: authHeaders({ "accept": "application/json" }) });
+      var text = await res.text();
+      var data = null;
+      try { data = text ? JSON.parse(text) : null; } catch (_) { data = text; }
+      if (!res.ok) throw new Error(describeError(res, data));
+      MODELS = (data && data.data) || [];
+      fillSelects();
+      renderModels(MODELS);
+      setStatus(status, MODELS.length + " 個可用模型", "ok");
+      $("healthText").textContent = "已連線 · " + MODELS.length + " 模型";
+      $("healthDot").className = "dot live";
+    } catch (e) {
+      var msg = e instanceof TypeError ? networkHint(e) : e.message;
+      setStatus(status, "", "err");
+      showError($("modelsOut"), msg);
+      $("healthText").textContent = "連線失敗";
+      $("healthDot").className = "dot down";
+      if (manual) fillSelects();
+    }
+  }
+
+  /* ---------------- 01 對話 ---------------- */
+
+  var history = [];
+  var chatAbort = null;
+
+  function renderThread() {
+    var thread = $("thread");
+    clear(thread);
+    if (!history.length) {
+      thread.appendChild(el("div", "empty", "還沒有訊息。在下方輸入問題後送出，對話會保留在這一輪的歷史中。"));
+      return;
+    }
+    history.forEach(function (m) {
+      thread.appendChild(messageNode(m));
+    });
+    thread.scrollTop = thread.scrollHeight;
+  }
+
+  function messageNode(m) {
+    var wrap = el("div", "msg " + m.role);
+    var label = m.role === "user" ? "你" : (m.role === "assistant" ? "助理" : "系統");
+    wrap.appendChild(el("div", "who", label));
+    if (m.reasoning) {
+      var det = el("details", "reasoning");
+      det.appendChild(el("summary", null, "思考過程"));
+      det.appendChild(el("div", "think", m.reasoning));
+      wrap.appendChild(det);
+    }
+    wrap.appendChild(el("div", "bubble", m.content));
+    return wrap;
+  }
+
+  function buildMessages() {
+    var msgs = [];
+    var sys = $("chatSystem").value.trim();
+    if (sys) msgs.push({ role: "system", content: sys });
+    history.forEach(function (m) { msgs.push({ role: m.role, content: m.content }); });
+    return msgs;
+  }
+
+  function chatPayload(stream) {
+    var body = {
+      model: $("chatModel").value,
+      messages: buildMessages(),
+      temperature: parseFloat($("chatTemp").value)
+    };
+    if (isNaN(body.temperature)) delete body.temperature;
+    var max = parseInt($("chatMaxTokens").value, 10);
+    if (!isNaN(max) && max > 0) body.max_tokens = max;
+    if (stream) body.stream = true;
+    return body;
+  }
+
+  function setChatBusy(busy) {
+    $("chatSend").disabled = busy;
+    $("chatStop").disabled = !busy;
+  }
+
+  async function sendChat() {
+    var input = $("chatInput");
+    var text = input.value.trim();
+    if (!text) { input.focus(); return; }
+
+    history.push({ role: "user", content: text });
+    input.value = "";
+    renderThread();
+
+    var status = $("chatStatus");
+    setStatus(status, "等待回應", "busy");
+    setChatBusy(true);
+    chatAbort = new AbortController();
+
+    var streaming = $("chatStream").checked;
+    var assistant = { role: "assistant", content: "", reasoning: "" };
+
+    try {
+      if (streaming) {
+        await streamChat(assistant, chatAbort.signal, status);
+      } else {
+        var data = await postJSON("/chat/completions", chatPayload(false), chatAbort.signal);
+        var choice = data && data.choices && data.choices[0];
+        var msg = (choice && choice.message) || {};
+        assistant.content = msg.content || "";
+        assistant.reasoning = msg.reasoning_content || "";
+        history.push(assistant);
+        renderThread();
+        var usage = data && data.usage;
+        setStatus(status, usage ? "完成 · " + usage.total_tokens + " tokens" : "完成", "ok");
+      }
+    } catch (e) {
+      if (e.name === "AbortError") {
+        if (assistant.content || assistant.reasoning) {
+          // 保留已經收到的片段
+        } else {
+          history.pop();
+          renderThread();
+        }
+        setStatus(status, "已停止");
+      } else {
+        var msg2 = e instanceof TypeError ? networkHint(e) : e.message;
+        history.push({ role: "system", content: msg2 });
+        renderThread();
+        setStatus(status, "請求失敗", "err");
+      }
+    } finally {
+      setChatBusy(false);
+      chatAbort = null;
+    }
+  }
+
+  async function streamChat(assistant, signal, status) {
+    var res = await fetch(BASE + "/chat/completions", {
+      method: "POST",
+      headers: authHeaders({ "Content-Type": "application/json", "accept": "text/event-stream" }),
+      body: JSON.stringify(chatPayload(true)),
+      signal: signal
+    });
+
+    if (!res.ok) {
+      var errText = await res.text();
+      var parsed = null;
+      try { parsed = JSON.parse(errText); } catch (_) { parsed = errText; }
+      throw new Error(describeError(res, parsed));
+    }
+
+    history.push(assistant);
+    renderThread();
+
+    var thread = $("thread");
+    var node = thread.lastElementChild;
+
+    function repaint() {
+      var fresh = messageNode(assistant);
+      // 保留使用者展開「思考過程」的狀態
+      var openDetails = node.querySelector("details.reasoning");
+      if (openDetails && openDetails.open) {
+        var d = fresh.querySelector("details.reasoning");
+        if (d) d.open = true;
+      }
+      thread.replaceChild(fresh, node);
+      node = fresh;
+      thread.scrollTop = thread.scrollHeight;
+    }
+
+    var reader = res.body.getReader();
+    var decoder = new TextDecoder();
+    var buffer = "";
+    var started = false;
+
+    while (true) {
+      var chunk = await reader.read();
+      if (chunk.done) break;
+      buffer += decoder.decode(chunk.value, { stream: true });
+
+      var lines = buffer.split("\n");
+      buffer = lines.pop();
+
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (!line || line.indexOf("data:") !== 0) continue;
+        var payload = line.slice(5).trim();
+        if (payload === "[DONE]") continue;
+        var json;
+        try { json = JSON.parse(payload); } catch (_) { continue; }
+        var delta = json.choices && json.choices[0] && json.choices[0].delta;
+        if (!delta) continue;
+        if (delta.reasoning_content) assistant.reasoning += delta.reasoning_content;
+        if (delta.content) assistant.content += delta.content;
+        if (!started && (assistant.content || assistant.reasoning)) {
+          started = true;
+          setStatus(status, "接收中", "busy");
+        }
+        repaint();
+      }
+    }
+
+    if (!assistant.content && !assistant.reasoning) {
+      assistant.content = "（模型沒有回傳內容）";
+      repaint();
+    }
+    setStatus(status, "完成", "ok");
+  }
+
+  $("chatSend").addEventListener("click", sendChat);
+  $("chatStop").addEventListener("click", function () { if (chatAbort) chatAbort.abort(); });
+  $("chatClear").addEventListener("click", function () {
+    history = [];
+    renderThread();
+    setStatus($("chatStatus"), "");
+  });
+  $("chatInput").addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); sendChat(); }
+  });
+
+  /* ---------------- 02 影像生成 ---------------- */
+
+  function imageSrc(item) {
+    if (item.b64_json) return "data:image/png;base64," + item.b64_json;
+    if (item.url) return item.url;
+    return null;
+  }
+
+  $("imgRun").addEventListener("click", async function () {
+    var prompt = $("imgPrompt").value.trim();
+    var status = $("imgStatus");
+    var out = $("imgOut");
+    if (!prompt) { setStatus(status, "請先輸入提示詞", "err"); return; }
+
+    setStatus(status, "生成中，可能需要數十秒", "busy");
+    this.disabled = true;
+    clear(out);
+    try {
+      var data = await postJSON("/images/generations", {
+        model: $("imgModel").value,
+        prompt: prompt,
+        n: parseInt($("imgCount").value, 10) || 1,
+        size: $("imgSize").value
+      });
+      var items = (data && data.data) || [];
+      if (!items.length) throw new Error("服務沒有回傳圖片。");
+      var gallery = el("div", "gallery");
+      items.forEach(function (item, i) {
+        var src = imageSrc(item);
+        if (!src) return;
+        var fig = el("figure");
+        var img = el("img");
+        img.src = src;
+        img.alt = "生成結果 " + (i + 1) + "：" + prompt;
+        img.loading = "lazy";
+        fig.appendChild(img);
+        fig.appendChild(el("figcaption", null, $("imgSize").value + " · " + $("imgModel").value));
+        gallery.appendChild(fig);
+      });
+      out.appendChild(gallery);
+      setStatus(status, "完成 · " + items.length + " 張", "ok");
+    } catch (e) {
+      setStatus(status, "", "err");
+      showError(out, e instanceof TypeError ? networkHint(e) : e.message);
+    } finally {
+      this.disabled = false;
+    }
+  });
+
+  /* ---------------- 03 語音轉文字 ---------------- */
+
+  var asrFile = null;
+
+  function isVideo(file) {
+    return /^video\//.test(file.type) || /\.(mp4|mov|webm|mkv|avi|m4v)$/i.test(file.name);
+  }
+
+  function setAsrFile(file) {
+    asrFile = file;
+    if (!file) {
+      $("asrFileName").textContent = "音檔 mp3、wav、m4a；影片 mp4、mov、webm";
+      return;
+    }
+    var size = (file.size / 1024 / 1024).toFixed(2) + " MB";
+    $("asrFileName").textContent = file.name + "（" + size + "）"
+      + (isVideo(file) ? " · 影片，將在本機抽出音軌" : "");
+  }
+
+  // 影片沒辦法直接送 ASR，先在瀏覽器解碼音軌再編成 wav
+  async function extractAudio(file) {
+    var AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) throw new Error("這個瀏覽器不支援音訊解碼，請改用轉檔工具匯出音軌後再上傳。");
+    var buf = await file.arrayBuffer();
+    var ctx = new AudioCtx();
+    try {
+      var decoded = await ctx.decodeAudioData(buf);
+      return encodeWav(decoded);
+    } catch (e) {
+      throw new Error("無法從這個檔案取出音軌，可能是編碼格式瀏覽器不支援。請先轉成 mp3 或 wav 再上傳。");
+    } finally {
+      ctx.close();
+    }
+  }
+
+  // 混成單聲道 16-bit PCM，降低上傳大小
+  function encodeWav(audioBuffer) {
+    var channels = audioBuffer.numberOfChannels;
+    var length = audioBuffer.length;
+    var rate = audioBuffer.sampleRate;
+    var mono = new Float32Array(length);
+    for (var c = 0; c < channels; c++) {
+      var data = audioBuffer.getChannelData(c);
+      for (var i = 0; i < length; i++) mono[i] += data[i] / channels;
+    }
+
+    var bytes = new ArrayBuffer(44 + length * 2);
+    var view = new DataView(bytes);
+    function str(offset, s) {
+      for (var i = 0; i < s.length; i++) view.setUint8(offset + i, s.charCodeAt(i));
+    }
+    str(0, "RIFF");
+    view.setUint32(4, 36 + length * 2, true);
+    str(8, "WAVEfmt ");
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
+    view.setUint32(24, rate, true);
+    view.setUint32(28, rate * 2, true);
+    view.setUint16(32, 2, true);
+    view.setUint16(34, 16, true);
+    str(36, "data");
+    view.setUint32(40, length * 2, true);
+    var offset = 44;
+    for (var j = 0; j < length; j++) {
+      var s = Math.max(-1, Math.min(1, mono[j]));
+      view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+      offset += 2;
+    }
+    return new Blob([view], { type: "audio/wav" });
+  }
+
+  // ASR 回的是簡體，這裡做常用字對照轉繁
+  var SIMP = "这测试么现发对开过还说时实来样国会个为点这与应该让让从体东车门问题电话语听写读学习长间关门马鸟鱼见贝车风飞习乡书买卖产务业丰临举么义乌乐乔习乱争亏云亚亲仅从仑仓仪们价众优伙会伟传伤伦伪体余佣侠侣侦侧侨侩侪侬俣俦俨俩俪俭债倾偬偾偿傥傧储傩儿兑兖党兰关兴兹养兽冁内冈册写军农冯冲决况冻净凄凉减凑凛几凤凭凯击凼凿刍刘则刚创删别刬刭刹刽刿剀剂剐剑剥剧劝办务劢动励劲劳势勋勐勚匀匦匮区医华协单卖卢卤卧卫却厂厅历厉压厌厍厕厢厣厦厨厩厮县参叆叇双发变叙叠号叹叽吁吃合吓吕吗吣吨听启吴呒呓呕呖呗员呙呛呜咏咔咙咛咝咤咴哌响哑哒哓哔哕哗哙哜哝哟唛唝唠唡唢唣唤啊啧啬啭啮啴啸喷喽喾嗫嗬嗳嘘嘤嘱噜嚣团园困围囵国图圆圣圹场坂坏块坚坛坜坝坞坟坠垄垅垆垒垦垩垫垭垱垲垴埘埙埚埯堑堕塆墙壮声壳壶壸处备复够头夸夹夺奁奂奋奖奥妆妇妈妩妪妫姗姜娄娅娆娇娈娱娲娴婳婴婵婶媪嫒嫔嫱嬷孙学孪宁宝实宠审宪宫宽宾寝对寻导寿将尔尘尧尴尸尽层屃屉届属屡屦屿岁岂岖岗岘岚岛岭岳岽岿峃峄峡峣峤峥峦崂崃崄崭嵘嵚嵛嵝嵴巅巩巯币帅师帏帐帘帜带帧帮帱帻帼幂幞干并广庄庆庐庑库应庙庞废庼廪开异弃张弥弪弯弹强归当录彟彦彻径徕御忆忏忧忾怀态怂怃怄怅怆怜总怼怿恋恳恶恸恹恺恻恼恽悦悫悬悭悯惊惧惨惩惫惬惭惮惯愍愠愤愦愿慑慭憷懑懒懔戆戋戏戗战戬户扎扑扦执扩扪扫扬扰抚抛抟抠抡抢护报担拟拢拣拥拦拧拨择挂挚挛挜挝挞挟挠挡挢挣挤挥挦捞损捡换捣据捻掼掷掸掺掼揸揽揿搀搁搂搅携摄摅摆摇摈摊撄撑撵撷撸撺擞攒敌敛数斋斓斗斩断无旧时旷旸昙昼昽显晋晒晓晔晕晖暂暧札术朴机杀杂权条来杨杩杰松板极构枞枢枣枥枧枨枪枫枭柜柠柽标栈栉栋栌栎栏树栖样栾桊桠桡桢档桤桥桦桧桨桩梦梼梾检棂椁椟椠椤椭楼榄榇榈榉槚槛槟槠横樯樱橥橱橹橼檐檩欢欤欧歼殁殂殇残殒殓殚殡殴毁毂毕毙毡毵氆氇气氢氩氲汇汉污汤汹沟没沣沤沥沦沧沨沩沪沵泞泪泶泷泸泺泻泼泽泾洁洒洗洘浃浅浆浇浈浉浊测浍济浏浐浑浒浓浔浕涂涌涛涝涞涟涠涡涢涣涤润涧涨涩淀渊渌渍渎渐渑渔渖渗温游湾湿溃溅溆溇滗滚滞滟滠满滢滤滥滦滨滩滪漤潆潇潍潜潴澜濑濒灏灭灯灵灾灿炀炉炖炜炝点炼炽烁烂烃烛烟烦烧烨烩烫烬热焕焖焘煅煳熘爱爷牍牦牵牺犊犟状犷犸犹狈狍狝狞独狭狮狯狰狱狲猃猎猕猡猪猫猬献獭玑玙玚玛玮环现玱玺珉珏珐珑珰珲琏琐琼瑶瑷璇璎瓒瓯电画畅畴疖疗疟疠疡疬疮疯疱疴痈痉痒痖痨痪痫痴瘅瘆瘗瘘瘪瘫瘾瘿癞癫癯皑皱皲盏盐监盖盗盘眍眦眬着睁睐睑瞒瞩矫矶矾矿砀码砖砗砚砜砺砻砾础硁硅硕硖硗硙硚确硷碍碛碜碱碲磙礼祎祢祯祷祸禀禄禅离秃秆种积称秽秾稆税稣稳穑穷窃窍窑窜窝窥窦窭竖竞笃笋笔笕笺笼笾筚筛筜筝筹签简箓箦箧箨箩箪箫篑篓篮篯簖籁籴类籼粜粝粤粪粮糁糇紧絷纟纠纡红纣纤纥约级纨纩纪纫纬纭纮纯纰纱纲纳纴纵纶纷纸纹纺纻纼纽纾线绀绁绂练组绅细织终绉绊绋绌绍绎经绐绑绒结绔绕绖绗绘给绚绛络绝绞统绠绡绢绣绤绥绦继绨绩绪绫绬续绮绯绰绱绲绳维绵绶绷绸绹绺绻综绽绾绿缀缁缂缃缄缅缆缇缈缉缊缋缌缍缎缏缑缒缓缔缕编缗缘缙缚缛缜缝缞缟缠缡缢缣缤缥缦缧缨缩缪缫缬缭缮缯缰缱缲缳缴缵罂网罗罚罢罴羁羟羡翘耢耧耸耻聂聋职聍联聩聪肃肠肤肷肾肿胀胁胆胜胧胨胪胫胶脉脍脏脐脑脓脔脚脱脶脸腊腌腘腭腻腼腽腾膑臜舆舣舰舱舻艰艳艹艺节芈芗芜芦苁苈苋苌苍苎苏苘苹茎茏茑茔茕茧荆荐荙荚荛荜荞荟荠荡荣荤荥荦荧荨荩荪荫荬荭荮药莅莱莲莳莴莶获莸莹莺莼萚萝萤营萦萧萨葱蒇蒉蒋蒌蓝蓟蓠蓣蓥蓦蔷蔹蔺蔼蕲蕴薇薮藓蘖虏虑虚虫虬虮虽虾虿蚀蚁蚂蚕蚝蚬蛊蛎蛏蛮蛰蛱蛲蛳蛴蜕蜗蜡蝇蝈蝉蝎蝼蝾螀螨蟏衅衔补衬衮袄袅袆袜袭袯装裆裈裢裣裤裥褛褴襁襕见观觃规觅视觇览觉觊觋觌觍觎觏觐觑觞触觯詟誉誊讠计订讣认讥讦讧讨让讪讫训议讯记讱讲讳讴讵讶讷许讹论讻讼讽设访诀证诂诃评诅识诇诈诉诊诋诌词诎诏诐译诒诓诔试诖诗诘诙诚诛诜话诞诟诠诡询诣诤该详诧诨诩诪诫诬语诮误诰诱诲诳说诵诶请诸诹诺读诼诽课诿谀谁调谂谄谅谆谇谈谊谋谌谍谎谏谐谑谒谓谔谕谖谗谘谙谚谛谜谝谞谟谠谡谢谣谤谥谦谧谨谩谪谫谬谭谮谯谰谱谲谳谴谵谶谷豮贝贞负贠贡财责贤败账货质贩贪贫贬购贮贯贰贱贲贳贴贵贶贷贸费贺贻贼贽贾贿赀赁赂赃资赅赆赇赈赉赊赋赌赍赎赏赐赑赒赓赔赕赖赗赘赙赚赛赜赝赞赟赠赡赢赣赪赵赶趋趱趸跃跄跖跞践跶跷跸跹跻踊踌踪踬踯蹑蹒蹰蹿躏躜躯车轧轨轩轪轫转轭轮软轰轱轲轳轴轵轶轷轸轹轺轻轼载轾轿辀辁辂较辄辅辆辇辈辉辊辋辌辍辎辏辐辑辒输辔辕辖辗辘辙辚辞辩辫边辽达迁过迈运还这进远违连迟迩迳迹适选逊递逦逻遗遥邓邝邬邮邹邺邻郁郄郏郐郑郓郦郧郸酝酦酱酽酾酿释鉴銮錾钆钇针钉钊钋钌钍钎钏钐钑钒钓钔钕钖钗钘钙钚钛钜钝钞钟钠钡钢钣钤钥钦钧钨钩钪钫钬钭钮钯钰钱钲钳钴钵钶钷钸钹钺钻钼钽钾钿铀铁铂铃铄铅铆铈铉铊铋铌铍铎铏铐铑铒铓铔铕铖铗铘铙铚铛铜铝铞铟铠铡铢铣铤铥铧铨铩铪铫铬铭铮铯铰铱铲铳铴铵银铷铸铹铺铻铼铽链铿销锁锂锃锄锅锆锇锈锉锊锋锌锍锎锏锐锑锒锓锔锕锖锗错锚锜锞锟锠锡锢锣锤锥锦锨锩锪锫锬锭键锯锰锱锲锳锴锵锶锷锸锹锺锻锼锽锾锿镀镁镂镃镆镇镈镉镊镌镍镎镏镐镑镒镓镔镕镖镗镘镙镚镛镜镝镞镟镠镡镢镣镤镥镦镧镨镩镪镫镬镭镮镯镰镱镲镳镴镶长门闩闪闫闬闭问闯闰闱闲闳间闵闶闷闸闹闺闻闼闽闾闿阀阁阂阃阄阅阆阇阈阉阊阋阌阍阎阏阐阑阒阓阔阕阖阗阘阙阚阛队阳阴阵阶际陆陇陈陉陕陧陨险随隐隶隽难雏雠雳雾霁霉霭靓静靥鞑鞒鞯鞴韦韧韨韩韪韫韬韵页顶顷顸项顺须顼顽顾顿颀颁颂颃预颅领颇颈颉颊颋颌颍颎颏颐频颒颓颔颕颖颗题颙颚颛颜额颞颟颠颡颢颣颤颥颦颧风飏飐飑飒飓飔飕飖飗飘飙飚飞飨餍饤饥饦饧饨饩饪饫饬饭饮饯饰饱饲饳饴饵饶饷饸饹饺饻饼饽饾饿馀馁馂馃馄馅馆馇馈馉馊馋馌馍馎馏馐馑馒馓馔馕马驭驮驯驰驱驲驳驴驵驶驷驸驹驺驻驼驽驾驿骀骁骂骃骄骅骆骇骈骉骊骋验骍骎骏骐骑骒骓骔骕骖骗骘骙骚骛骜骝骞骟骠骡骢骣骤骥骦骧髅髋髌鬓魇魉鱼鱽鱾鱿鲀鲁鲂鲄鲅鲆鲇鲈鲉鲊鲋鲌鲍鲎鲏鲐鲑鲒鲓鲔鲕鲖鲗鲘鲙鲚鲛鲜鲝鲞鲟鲠鲡鲢鲣鲤鲥鲦鲧鲨鲩鲪鲫鲬鲭鲮鲯鲰鲱鲲鲳鲴鲵鲶鲷鲸鲹鲺鲻鲼鲽鲾鲿鳀鳁鳂鳃鳄鳅鳆鳇鳈鳉鳊鳋鳌鳍鳎鳏鳐鳑鳒鳓鳔鳕鳖鳗鳘鳙鳛鳜鳝鳞鳟鳠鳡鳢鳣鸟鸠鸡鸢鸣鸤鸥鸦鸧鸨鸩鸪鸫鸬鸭鸮鸯鸰鸱鸲鸳鸴鸵鸶鸷鸸鸹鸺鸻鸼鸽鸾鸿鹀鹁鹂鹃鹄鹅鹆鹇鹈鹉鹊鹋鹌鹎鹏鹐鹑鹒鹓鹔鹕鹖鹗鹘鹚鹛鹜鹝鹞鹟鹠鹡鹢鹣鹤鹥鹦鹧鹨鹩鹪鹫鹬鹭鹯鹰鹱鹲鹳鹴鹾麦麸黄黉黡黩黪黾鼋鼌鼍鼗鼹齄齐齑齿龀龁龂龃龄龅龆龇龈龉龊龋龌龙龚龛龟";
+  var TRAD = "這測試麼現發對開過還說時實來樣國會個為點這與應該讓讓從體東車門問題電話語聽寫讀學習長間關門馬鳥魚見貝車風飛習鄉書買賣產務業豐臨舉麼義烏樂喬習亂爭虧雲亞親僅從侖倉儀們價眾優夥會偉傳傷倫偽體餘傭俠侶偵側僑儈儕儂俁儔儼倆儷儉債傾傯僨償儻儐儲儺兒兌兗黨蘭關興茲養獸囅內岡冊寫軍農馮沖決況凍凈凄涼減湊凜幾鳳憑凱擊氹鑿芻劉則剛創刪別剗剄剎劊劌剴劑剮劍剝劇勸辦務勱動勵勁勞勢勛猛勩勻匭匱區醫華協單賣盧鹵臥衛卻廠廳歷厲壓厭厙廁廂厴廈廚廄廝縣參靉靆雙發變敘疊號嘆嘰籲吃合嚇呂嗎唚噸聽啟吳嘸囈嘔嚦唄員咼嗆嗚詠哢嚨嚀噝吒噅呱響啞噠嘵嗶噦嘩噲嚌噥喲嘜嗊嘮啢嗩唕喚啊嘖嗇囀嚙嘽嘯噴嘍嚳囁嗬噯噓嚶囑嚕囂團園困圍圇國圖圓聖壙場阪壞塊堅壇壢壩塢墳墜壟壟壚壘墾堊墊埡壋塏堖塒塤堝垵塹墮壪墻壯聲殼壺壼處備復夠頭誇夾奪奩奐奮獎奧妝婦媽嫵嫗媯姍姜婁婭嬈嬌孌娛媧嫻嫿嬰嬋嬸媼嬡嬪嬙嬤孫學孿寧寶實寵審憲宮寬賓寢對尋導壽將爾塵堯尷屍盡層屓屜屆屬屢屨嶼歲豈嶇崗峴嵐島嶺嶽崠巋嶨嶧峽嶢嶠崢巒嶗崍嶮嶄嶸嶔崳嶁脊巔鞏巰幣帥師幃帳簾幟帶幀幫幬幘幗冪襆幹並廣莊慶廬廡庫應廟龐廢廎廩開異棄張彌弳彎彈強歸當錄彠彥徹徑徠禦憶懺憂愾懷態慫憮慪悵愴憐總懟懌戀懇惡慟懨愷惻惱惲悅愨懸慳憫驚懼慘懲憊愜慚憚慣湣慍憤憒願懾憖怵懣懶懍戇戔戲戧戰戩戶紮撲扦執擴捫掃揚擾撫拋摶摳掄搶護報擔擬攏揀擁攔擰撥擇掛摯攣掗撾撻挾撓擋撟掙擠揮撏撈損撿換搗據捻摜擲撣摻摜摣攬撳攙擱摟攪攜攝攄擺搖擯攤攖撐攆擷擼攛擻攢敵斂數齋斕鬥斬斷無舊時曠暘曇晝曨顯晉曬曉曄暈暉暫曖劄術樸機殺雜權條來楊榪傑松板極構樅樞棗櫪梘棖槍楓梟櫃檸檉標棧櫛棟櫨櫟欄樹棲樣欒棬椏橈楨檔榿橋樺檜槳樁夢檮棶檢欞槨櫝槧欏橢樓欖櫬櫚櫸檟檻檳櫧橫檣櫻櫫櫥櫓櫞檐檁歡歟歐殲歿殂殤殘殞殮殫殯毆毀轂畢斃氈毿氆氌氣氫氬氳匯漢汙湯洶溝沒灃漚瀝淪滄渢溈滬濔濘淚澩瀧瀘濼瀉潑澤涇潔灑洗滒浹淺漿澆湞溮濁測澮濟瀏滻渾滸濃潯濜塗湧濤澇淶漣潿渦溳渙滌潤澗漲澀澱淵淥漬瀆漸澠漁瀋滲溫遊灣濕潰濺漵漊潷滾滯灩灄滿瀅濾濫灤濱灘澦濫瀠瀟濰潛瀦瀾瀨瀕灝滅燈靈災燦煬爐燉煒熗點煉熾爍爛烴燭煙煩燒燁燴燙燼熱煥燜燾煅糊溜愛爺牘犛牽犧犢強狀獷獁猶狽麅獮獰獨狹獅獪猙獄猻獫獵獼玀豬貓蝟獻獺璣璵瑒瑪瑋環現瑲璽瑉玨琺瓏璫琿璉瑣瓊瑤璦璇瓔瓚甌電畫暢疇癤療瘧癘瘍鬁瘡瘋皰屙癰痙癢瘂癆瘓癇癡癉瘮瘞瘺癟癱癮癭癩癲臒皚皺皸盞鹽監蓋盜盤瞘眥矓著睜睞瞼瞞矚矯磯礬礦碭碼磚硨硯碸礪礱礫礎硜矽碩硤磽磑礄確鹼礙磧磣鹼碲滾禮禕禰禎禱禍稟祿禪離禿稈種積稱穢穠穭稅穌穩穡窮竊竅窯竄窩窺竇窶豎競篤筍筆筧箋籠籩篳篩簹箏籌簽簡籙簀篋籜籮簞簫簣簍籃鐕籪籟糴類秈糶糲粵糞糧糝餱緊縶糹糾紆紅紂纖紇約級紈纊紀紉緯紜紘純粃紗綱納紝縱綸紛紙紋紡紵紖紐紓線紺絏紱練組紳細織終縐絆紼絀紹繹經紿綁絨結絝繞絰絎繪給絢絳絡絕絞統綆綃絹繡綌綏絳繼綈績緒綾緓續綺緋綽緔緄繩維綿綬繃綢綯綹綣綜綻綰綠綴緇緙緗緘緬纜緹緲緝縕繢緦綞緞緶緱縋緩締縷編緡緣縉縛縟縝縫縗縞纏縭縊縑繽縹縵縲纓縮繆繅纈繚繕繒韁繾繰繯繳纘罌網羅罰罷羆羈羥羨翹耮耬聳恥聶聾職聹聯聵聰肅腸膚膁腎腫脹脅膽勝朧腖臚脛膠脈膾臟臍腦膿臠腳脫腡臉臘醃膕齶膩靦膃騰臏臢輿艤艦艙艫艱艷艸藝節羋薌蕪蘆蓯藶莧萇蒼苧蘇檾蘋莖蘢蔦塋煢繭荊薦薘莢蕘蓽蕎薈薺蕩榮葷滎犖熒蕁藎蓀蔭蕒葒葤藥蒞萊蓮蒔萵薟獲蕕瑩鶯蓴蘀蘿螢營縈蕭薩蔥蕆蕢蔣蔞藍薊蘺蕷鎣驀薔蘞藺藹蘄蘊薇藪蘚櫱虜慮虛蟲虯蟣雖蝦蠆蝕蟻螞蠶蠔蜆蠱蠣蟶蠻蟄蛺蟯螄蠐蛻蝸蠟蠅蟈蟬蠍螻蠑螿蟎蠨釁銜補襯袞襖裊褘襪襲襏裝襠褌褳襝褲襉褸襤繈襴見觀覎規覓視覘覽覺覬覡覿覥覦覯覲覷觴觸觶讋譽謄訁計訂訃認譏訐訌討讓訕訖訓議訊記訒講諱謳詎訝訥許訛論訩訟諷設訪訣證詁訶評詛識詗詐訴診詆謅詞詘詔詖譯詒誆誄試詿詩詰詼誠誅詵話誕詬詮詭詢詣諍該詳詫諢詡譸誡誣語誚誤誥誘誨誑說誦誒請諸諏諾讀諑誹課諉諛誰調諗諂諒諄誶談誼謀諶諜謊諫諧謔謁謂諤諭諼讒諮諳諺諦謎諞諝謨讜謖謝謠謗謚謙謐謹謾謫譾謬譚譖譙讕譜譎讞譴譫讖谷豶貝貞負貟貢財責賢敗賬貨質販貪貧貶購貯貫貳賤賁貰貼貴貺貸貿費賀貽賊贄賈賄貲賃賂贓資賅贐賕賑賚賒賦賭齎贖賞賜贔賙賡賠賧賴賵贅賻賺賽賾贗贊贇贈贍贏贛赬趙趕趨趲躉躍蹌蹠躒踐躂蹺蹕躚躋踴躊蹤躓躑躡蹣躕躥躪躦軀車軋軌軒軑軔轉軛輪軟轟軲軻轤軸軹軼軤軫轢軺輕軾載輊轎輈軏輅較輒輔輛輦輩輝輥輞輬輟輜輳輻輯轀輸轡轅轄輾轆轍轔辭辯辮邊遼達遷過邁運還這進遠違連遲邇逕跡適選遜遞邐邏遺遙鄧鄺鄔郵鄒鄴鄰鬱郤郟鄶鄭鄆酈鄖鄲醞醱醬釅釃釀釋鑒鑾鏨釓釔針釘釗釙釕釷釺釧釤鈒釩釣鍆釹鍚釵鈃鈣鈈鈦鉅鈍鈔鐘鈉鋇鋼鈑鈐鑰欽鈞鎢鉤鈧鈁鈥鈄鈕鈀鈺錢鉦鉗鈷缽鈳鉕鈽鈸鉞鑽鉬鉭鉀鈿鈾鐵鉑鈴鑠鉛鉚鈰鉉鉈鉍鈮鈹鐸鉶銬銠鉺鋩錏銪鋮鋏鋣鐃銍鐺銅鋁銱銦鎧鍘銖銑鋌銩鏵銓鎩鉿銚鉻銘錚銫鉸銥鏟銃鐋銨銀銣鑄鐒鋪鋙錸鋱鏈鏗銷鎖鋰鋥鋤鍋鋯鋨銹銼鋝鋒鋅鋶鐦鐧銳銻鋃鋟鋦錒錆鍺錯錨錡錁錕錩錫錮鑼錘錐錦鍁錈鍃錇錟錠鍵鋸錳錙鍥鍈鍇鏘鍶鍔鍤鍬鍾鍛鎪鍠鍰鎄鍍鎂鏤鎡鏌鎮鎛鎘鑷鐫鎳鎿鎦鎬鎊鎰鎵鑌鎔鏢鏜鏝鏍鏰鏞鏡鏑鏃鏇鏐鐔鐝鐐鏷鑥鐓鑭鐠鑹鏹鐙鑊鐳鐶鐲鐮鐿鑔鑣鑞鑲長門閂閃閆閈閉問闖閏闈閑閎間閔閌悶閘鬧閨聞闥閩閭闓閥閣閡閫鬮閱閬闍閾閹閶鬩閿閽閻閼闡闌闃闠闊闋闔闐闒闕闞闤隊陽陰陣階際陸隴陳陘陝隉隕險隨隱隸雋難雛讎靂霧霽黴靄靚靜靨韃鞽韉韝韋韌韍韓韙韞韜韻頁頂頃頇項順須頊頑顧頓頎頒頌頏預顱領頗頸頡頰頲頜潁熲頦頤頻頮頹頷頴穎顆題顒顎顓顏額顳顢顛顙顥纇顫顬顰顴風颺颭颮颯颶颸颼颻飀飄飆飈飛饗饜飣饑飥餳飩餼飪飫飭飯飲餞飾飽飼飿飴餌饒餉餄餎餃餏餅餑餖餓餘餒餕餜餛餡館餷饋餶餿饞饁饃餺餾饈饉饅饊饌饢馬馭馱馴馳驅馹駁驢駔駛駟駙駒騶駐駝駑駕驛駘驍罵駰驕驊駱駭駢驫驪騁驗騂駸駿騏騎騍騅騪驌驂騙騭騤騷騖驁騮騫騸驃騾驄驏驟驥驦驤髏髖髕鬢魘魎魚魛魢魷魨魯魴魺鮁鮃鯰鱸鮋鮓鮒鮊鮑鱟鯽鮐鮭鮚鮳鮪鮞鮦鰂鮜鱠鱭鮫鮮鮺鯗鱘鯁鱺鰱鰹鯉鰣鰷鯀鯊鯇鮶鯽鯒鯖鯪鯕鯫鯡鯤鯧鯝鯢鯰鯛鯨鯵鯴鯔鱝鰈鰏鱨鯷鰮鰃鰓鱷鰍鰒鰉鰁鱂鯿鰠鰲鰭鰨鰥鰩鰟鰜鰳鰾鱈鱉鰻鰵鱅鰼鱖鱔鱗鱒鱯鱤鱧鱣鳥鳩雞鳶鳴鳲鷗鴉鶬鴇鴆鴣鶇鸕鴨鶚鴦鴒鴟鴝鴛鷽鴕鷥鷙鴯鴰鵂鴴鵃鴿鸞鴻鵐鵓鸝鵑鵠鵝鵒鷳鵜鵡鵲鶓鵪鵯鵬鵮鶉鶊鵷鷫鶘鶡鶚鶻鶿鶥鶩鷊鷂鶲鶹鶺鷁鶼鶴鷖鸚鷓鷚鷯鷦鷲鷸鷺鸇鷹鸌鸏鸛鸘鹺麥麩黃黌黶黷黲黽黿鼂鼉鞀鼴齇齊齏齒齔齕齗齟齡齙齠齜齦齬齪齲齷龍龔龕龜";
+
+  function toTraditional(s) {
+    var out = "";
+    for (var i = 0; i < s.length; i++) {
+      var idx = SIMP.indexOf(s[i]);
+      out += idx >= 0 ? TRAD[idx] : s[i];
+    }
+    return out;
+  }
+
+  $("asrDrop").addEventListener("click", function () { $("asrFile").click(); });
+  $("asrFile").addEventListener("change", function (e) { setAsrFile(e.target.files[0] || null); });
+  ["dragenter", "dragover"].forEach(function (ev) {
+    $("asrDrop").addEventListener(ev, function (e) { e.preventDefault(); this.classList.add("over"); });
+  });
+  ["dragleave", "drop"].forEach(function (ev) {
+    $("asrDrop").addEventListener(ev, function (e) { e.preventDefault(); this.classList.remove("over"); });
+  });
+  $("asrDrop").addEventListener("drop", function (e) {
+    var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (f) setAsrFile(f);
+  });
+
+  $("asrRun").addEventListener("click", async function () {
+    var status = $("asrStatus");
+    var out = $("asrOut");
+    if (!asrFile) { setStatus(status, "請先選擇音檔", "err"); return; }
+
+    this.disabled = true;
+    clear(out);
+    try {
+      var upload = asrFile;
+      var uploadName = asrFile.name;
+      if (isVideo(asrFile)) {
+        setStatus(status, "抽取音軌中", "busy");
+        var wav = await extractAudio(asrFile);
+        uploadName = asrFile.name.replace(/\.[^.]+$/, "") + ".wav";
+        upload = new File([wav], uploadName, { type: "audio/wav" });
+      }
+
+      setStatus(status, "轉寫中", "busy");
+      var form = new FormData();
+      form.append("file", upload, uploadName);
+      form.append("model", $("asrModel").value);
+      var lang = $("asrLang").value;
+      if (lang) form.append("language", lang);
+      form.append("response_format", "json");
+
+      var res = await fetch(BASE + "/audio/transcriptions", {
+        method: "POST", headers: authHeaders(), body: form
+      });
+      var text = await res.text();
+      var data = null;
+      try { data = text ? JSON.parse(text) : null; } catch (_) { data = text; }
+      if (!res.ok) throw new Error(describeError(res, data));
+
+      var transcript = (data && (data.text || data.transcription)) || (typeof data === "string" ? data : "");
+      if (transcript && $("asrTrad").checked) transcript = toTraditional(transcript);
+
+      clear(out);
+      var head = el("div", "result-head");
+      head.appendChild(el("span", null, "轉寫結果"));
+      var meta = asrFile.name;
+      if (data && data.usage && data.usage.seconds) meta += " · " + data.usage.seconds + " 秒";
+      head.appendChild(el("span", null, meta));
+      out.appendChild(head);
+      out.appendChild(el("pre", "out", transcript || JSON.stringify(data, null, 2)));
+      setStatus(status, "完成", "ok");
+    } catch (e) {
+      setStatus(status, "", "err");
+      showError(out, e instanceof TypeError ? networkHint(e) : e.message);
+    } finally {
+      this.disabled = false;
+    }
+  });
+
+  /* ---------------- 04 文字轉語音 ---------------- */
+
+  $("ttsRun").addEventListener("click", async function () {
+    var status = $("ttsStatus");
+    var out = $("ttsOut");
+    var input = $("ttsInput").value.trim();
+    if (!input) { setStatus(status, "請先輸入文字", "err"); return; }
+
+    setStatus(status, "合成中", "busy");
+    this.disabled = true;
+    clear(out);
+    try {
+      var res = await fetch(BASE + "/audio/speech", {
+        method: "POST",
+        headers: authHeaders({ "Content-Type": "application/json" }),
+        body: JSON.stringify({
+          model: $("ttsModel").value,
+          input: input,
+          voice: $("ttsVoice").value.trim() || undefined,
+          response_format: $("ttsFormat").value
+        })
+      });
+
+      if (!res.ok) {
+        var errText = await res.text();
+        var parsed = null;
+        try { parsed = JSON.parse(errText); } catch (_) { parsed = errText; }
+        throw new Error(describeError(res, parsed));
+      }
+
+      var blob = await res.blob();
+      var url = URL.createObjectURL(blob);
+      var head = el("div", "result-head");
+      head.appendChild(el("span", null, "語音輸出"));
+      head.appendChild(el("span", null, (blob.size / 1024).toFixed(0) + " KB · " + $("ttsFormat").value));
+      out.appendChild(head);
+      var audio = el("audio");
+      audio.controls = true;
+      audio.src = url;
+      out.appendChild(audio);
+      setStatus(status, "完成", "ok");
+    } catch (e) {
+      setStatus(status, "", "err");
+      showError(out, e instanceof TypeError ? networkHint(e) : e.message);
+    } finally {
+      this.disabled = false;
+    }
+  });
+
+  /* ---------------- 05 向量化 ---------------- */
+
+  function cosine(a, b) {
+    var dot = 0, na = 0, nb = 0;
+    for (var i = 0; i < a.length; i++) {
+      dot += a[i] * b[i];
+      na += a[i] * a[i];
+      nb += b[i] * b[i];
+    }
+    if (!na || !nb) return 0;
+    return dot / (Math.sqrt(na) * Math.sqrt(nb));
+  }
+
+  $("embRun").addEventListener("click", async function () {
+    var status = $("embStatus");
+    var out = $("embOut");
+    var lines = $("embInput").value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
+    if (!lines.length) { setStatus(status, "請先輸入文字", "err"); return; }
+
+    setStatus(status, "計算中", "busy");
+    this.disabled = true;
+    clear(out);
+    try {
+      var data = await postJSON("/embeddings", {
+        model: $("embModel").value,
+        input: lines.length === 1 ? lines[0] : lines,
+        encoding_format: $("embFormat").value
+      });
+      var items = (data && data.data) || [];
+      if (!items.length) throw new Error("服務沒有回傳向量。");
+
+      clear(out);
+      var first = items[0].embedding;
+      var dims = Array.isArray(first) ? first.length : null;
+
+      var stats = el("div", "vec-stats");
+      [["筆數", String(items.length)], ["維度", dims !== null ? String(dims) : "base64"],
+       ["Tokens", data.usage ? String(data.usage.total_tokens) : "—"]].forEach(function (pair) {
+        var box = el("div");
+        box.appendChild(el("span", "k", pair[0]));
+        box.appendChild(el("span", "v", pair[1]));
+        stats.appendChild(box);
+      });
+      out.appendChild(stats);
+
+      if (dims !== null && items.length > 1) {
+        var simHead = el("div", "result-head");
+        simHead.appendChild(el("span", null, "兩兩餘弦相似度"));
+        out.appendChild(simHead);
+        var rank = el("div", "rank");
+        for (var i = 0; i < items.length; i++) {
+          for (var j = i + 1; j < items.length; j++) {
+            var score = cosine(items[i].embedding, items[j].embedding);
+            var item = el("div", "rank-item");
+            var top = el("div", "rank-top");
+            top.appendChild(el("span", "rank-text", "第 " + (i + 1) + " 行 ↔ 第 " + (j + 1) + " 行"));
+            top.appendChild(el("span", "rank-score", score.toFixed(4)));
+            item.appendChild(top);
+            var bar = el("div", "bar");
+            var fill = el("span");
+            fill.style.width = Math.max(0, Math.min(1, score)) * 100 + "%";
+            bar.appendChild(fill);
+            item.appendChild(bar);
+            rank.appendChild(item);
+          }
+        }
+        out.appendChild(rank);
+      }
+
+      var head = el("div", "result-head");
+      head.appendChild(el("span", null, "第 1 筆向量前 12 個值"));
+      out.appendChild(head);
+      var preview = dims !== null
+        ? "[" + first.slice(0, 12).map(function (v) { return v.toFixed(6); }).join(", ") + (dims > 12 ? ", …" : "") + "]"
+        : String(first).slice(0, 300) + "…";
+      out.appendChild(el("pre", "out", preview));
+      setStatus(status, "完成", "ok");
+    } catch (e) {
+      setStatus(status, "", "err");
+      showError(out, e instanceof TypeError ? networkHint(e) : e.message);
+    } finally {
+      this.disabled = false;
+    }
+  });
+
+  /* ---------------- 06 重排序 ---------------- */
+
+  $("rrRun").addEventListener("click", async function () {
+    var status = $("rrStatus");
+    var out = $("rrOut");
+    var query = $("rrQuery").value.trim();
+    var docs = $("rrDocs").value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
+    if (!query) { setStatus(status, "請先輸入查詢字串", "err"); return; }
+    if (!docs.length) { setStatus(status, "請先輸入候選文件", "err"); return; }
+
+    setStatus(status, "排序中", "busy");
+    this.disabled = true;
+    clear(out);
+    try {
+      var payload = { model: $("rrModel").value, query: query, documents: docs };
+      var topN = parseInt($("rrTopN").value, 10);
+      if (!isNaN(topN) && topN > 0) payload.top_n = topN;
+
+      var data = await postJSON("/rerank", payload);
+      var results = (data && data.results) || [];
+      if (!results.length) throw new Error("服務沒有回傳排序結果。");
+
+      clear(out);
+      var head = el("div", "result-head");
+      head.appendChild(el("span", null, "排序結果"));
+      head.appendChild(el("span", null, results.length + " / " + docs.length + " 筆"));
+      out.appendChild(head);
+
+      var rank = el("div", "rank");
+      results.forEach(function (r, i) {
+        var text = (r.document && (r.document.text || r.document)) || docs[r.index] || "";
+        var score = typeof r.relevance_score === "number" ? r.relevance_score : 0;
+        var item = el("div", "rank-item");
+        var top = el("div", "rank-top");
+        top.appendChild(el("span", "rank-text", (i + 1) + ". " + text));
+        top.appendChild(el("span", "rank-score", score.toFixed(4)));
+        item.appendChild(top);
+        var bar = el("div", "bar");
+        var fill = el("span");
+        fill.style.width = Math.max(0, Math.min(1, score)) * 100 + "%";
+        bar.appendChild(fill);
+        item.appendChild(bar);
+        rank.appendChild(item);
+      });
+      out.appendChild(rank);
+      setStatus(status, "完成", "ok");
+    } catch (e) {
+      setStatus(status, "", "err");
+      showError(out, e instanceof TypeError ? networkHint(e) : e.message);
+    } finally {
+      this.disabled = false;
+    }
+  });
+
+  /* ---------------- 07 模型清單 ---------------- */
+
+  $("modelsRun").addEventListener("click", function () { loadModels(true); });
+
+  /* ---------------- 分頁與主題 ---------------- */
+
+  var tabs = Array.prototype.slice.call(document.querySelectorAll(".rail button"));
+  var panels = Array.prototype.slice.call(document.querySelectorAll("[data-panel]"));
+
+  function activate(view) {
+    tabs.forEach(function (t) { t.setAttribute("aria-selected", String(t.dataset.view === view)); });
+    panels.forEach(function (p) { p.hidden = p.dataset.panel !== view; });
+    try { localStorage.setItem("aihub.view", view); } catch (_) {}
+  }
+
+  tabs.forEach(function (t) {
+    t.addEventListener("click", function () { activate(t.dataset.view); });
+  });
+
+  var themeBtn = $("themeBtn");
+  function currentTheme() {
+    var stamped = document.documentElement.getAttribute("data-theme");
+    if (stamped) return stamped;
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  themeBtn.addEventListener("click", function () {
+    var next = currentTheme() === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try { localStorage.setItem("aihub.theme", next); } catch (_) {}
+  });
+
+  try {
+    var savedTheme = localStorage.getItem("aihub.theme");
+    if (savedTheme) document.documentElement.setAttribute("data-theme", savedTheme);
+    var savedView = localStorage.getItem("aihub.view");
+    if (savedView && tabs.some(function (t) { return t.dataset.view === savedView; })) activate(savedView);
+  } catch (_) {}
+
+  renderThread();
+  loadModels(false);
+})();
+</script>
+</body>
+</html>
