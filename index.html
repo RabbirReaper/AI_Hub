@@ -1,10 +1,26 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="zh-Hant">
   <head>
-    <meta charset="UTF-8">
-    <link rel="icon" href="/favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vite App</title>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <title>AIHub 工作台</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;600;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+    <script>
+      // 先讀 localStorage 打上 data-theme，避免切到深色主題時的閃白
+      ;(function () {
+        try {
+          var saved = localStorage.getItem('aihub.theme')
+          if (saved) document.documentElement.setAttribute('data-theme', saved)
+        } catch (_e) {
+          /* localStorage 不可用時忽略，交給 prefers-color-scheme 媒體查詢 */
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="app"></div>

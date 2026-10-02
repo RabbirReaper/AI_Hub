@@ -1,35 +1,116 @@
-@import './base.css';
+/* 這是全專案唯一的全域樣式檔，包含 Tailwind 基礎匯入、主題 token 定義與基礎樣式。 */
+@import 'tailwindcss';
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+@theme {
+  --color-canvas: #eef1f5;
+  --color-surface: #ffffff;
+  --color-surface-sunken: #f7f9fb;
+  --color-line: #d3dae3;
+  --color-line-soft: #e4e9ef;
+  --color-ink: #1a2029;
+  --color-ink-soft: #4e5a6a;
+  --color-ink-faint: #7d8899;
+  --color-accent: #1f5f8b;
+  --color-accent-ink: #ffffff;
+  --color-accent-soft: #e2edf4;
+  --color-warm: #c0632a;
+  --color-warm-soft: #f6e9df;
+  --color-ok: #2f7d55;
+  --color-bad: #b3373a;
+  --color-bad-soft: #f8e4e4;
+
+  --font-sans: 'Noto Sans TC', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display: 'Chivo', 'Noto Sans TC', system-ui, sans-serif;
+
+  --shadow-panel: 0 1px 2px rgba(26, 32, 41, 0.06), 0 8px 24px -16px rgba(26, 32, 41, 0.3);
+
+  --radius-card: 10px;
+  --radius-control: 7px;
+  --radius-chip: 5px;
+  --radius-bubble: 9px;
+
+  --container-shell: 1180px;
+  --container-rail: 208px;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    /* 必須同步修改 */
+    --color-canvas: #11151b;
+    --color-surface: #192029;
+    --color-surface-sunken: #1f2730;
+    --color-line: #313c49;
+    --color-line-soft: #262f3a;
+    --color-ink: #e7ecf2;
+    --color-ink-soft: #a7b3c2;
+    --color-ink-faint: #788697;
+    --color-accent: #64a8d8;
+    --color-accent-ink: #0d1319;
+    --color-accent-soft: #1d2d3a;
+    --color-warm: #e2905a;
+    --color-warm-soft: #33251b;
+    --color-ok: #5cb98a;
+    --color-bad: #e47174;
+    --color-bad-soft: #35211f;
+    --shadow-panel: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 28px -18px rgba(0, 0, 0, 0.9);
+  }
+  :root[data-theme='dark'] {
+    /* 必須同步修改 */
+    --color-canvas: #11151b;
+    --color-surface: #192029;
+    --color-surface-sunken: #1f2730;
+    --color-line: #313c49;
+    --color-line-soft: #262f3a;
+    --color-ink: #e7ecf2;
+    --color-ink-soft: #a7b3c2;
+    --color-ink-faint: #788697;
+    --color-accent: #64a8d8;
+    --color-accent-ink: #0d1319;
+    --color-accent-soft: #1d2d3a;
+    --color-warm: #e2905a;
+    --color-warm-soft: #33251b;
+    --color-ok: #5cb98a;
+    --color-bad: #e47174;
+    --color-bad-soft: #35211f;
+    --shadow-panel: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 28px -18px rgba(0, 0, 0, 0.9);
   }
 }
 
-@media (min-width: 1024px) {
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
   body {
-    display: flex;
-    place-items: center;
+    margin: 0;
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+  img {
+    max-width: 100%;
+  }
+  [hidden] {
+    display: none !important;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      scroll-behavior: auto !important;
+    }
   }
 }
