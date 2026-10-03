@@ -75,7 +75,9 @@ export const useApiTokenStore = defineStore('apiToken', () => {
     tokens.value.push(token)
     if (!activeId.value) activeId.value = token.id
     persist()
-    return token
+    // 回傳陣列內的版本，不是 push 前的原始物件參照（同 chatSession.ts
+    // pushAssistant() 的理由：避免呼叫端拿著非響應式的參照去 mutate）。
+    return tokens.value[tokens.value.length - 1]!
   }
 
   function rename(id: string, label: string): void {
