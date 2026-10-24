@@ -19,7 +19,13 @@
       "Bash(curl -s -o /dev/null -w \"5173: %{http_code}\\\\n\" http://localhost:5173/)",
       "Bash(curl -s -o /dev/null -w \"5174: %{http_code}\\\\n\" http://localhost:5174/)",
       "Bash(curl -s http://localhost:5173/)",
-      "Bash(yarn playwright *)"
+      "Bash(yarn playwright *)",
+      "Bash(yt-dlp --version)",
+      "Bash(where.exe yt-dlp *)",
+      "Bash(conda run *)",
+      "Bash(ffmpeg -version)",
+      "Bash(yt-dlp --no-playlist --print \"%\\(title\\)s | %\\(duration_string\\)s | %\\(filesize_approx\\)s\" \"https://www.youtube.com/watch?v=zinUNCV30Ew\")",
+      "Bash(PYTHONIOENCODING=utf-8 yt-dlp --no-update --no-playlist -f \"bv*[height<=720][ext=mp4]+ba[ext=m4a]/b[ext=mp4]/b\" --merge-output-format mp4 -o \"%\\(title\\)s [%\\(id\\)s].%\\(ext\\)s\" \"https://www.youtube.com/watch?v=zinUNCV30Ew\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\Rabbir\\AppData\\Local\\Temp\\claude\\d--Coding-training-AI-Bub\\519265b1-873c-4480-bbef-8bcc4259f4a2\\scratchpad",
