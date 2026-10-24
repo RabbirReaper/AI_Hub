@@ -8,10 +8,16 @@
       "Bash(mkdir -p \"/c/Users/Rabbir/AppData/Local/Temp/claude/d--Coding-training-AI-Bub/519265b1-873c-4480-bbef-8bcc4259f4a2/scratchpad\")",
       "Bash(curl -s -X POST https://www.iai.nkust.edu.tw/aihub/v1/rerank -H 'Authorization: Bearer sk-hgYYIpuzlmRE_gt5KAxPmQ' -H 'Content-Type: application/json' --data-binary @C:/Users/Rabbir/AppData/Local/Temp/claude/d--Coding-training-AI-Bub/519265b1-873c-4480-bbef-8bcc4259f4a2/scratchpad/test_rerank_payload.json --max-time 30 -w '\\\\n--- HTTP %{http_code} ---\\\\n')",
       "Bash(rm -rf dist)",
-      "Bash(rm -f C:/Users/Rabbir/AppData/Local/Temp/claude/d--Coding-training-AI-Bub/519265b1-873c-4480-bbef-8bcc4259f4a2/scratchpad/user_review4.txt C:/Users/Rabbir/AppData/Local/Temp/claude/d--Coding-training-AI-Bub/519265b1-873c-4480-bbef-8bcc4259f4a2/scratchpad/review_out4.txt)"
+      "Bash(rm -f C:/Users/Rabbir/AppData/Local/Temp/claude/d--Coding-training-AI-Bub/519265b1-873c-4480-bbef-8bcc4259f4a2/scratchpad/user_review4.txt C:/Users/Rabbir/AppData/Local/Temp/claude/d--Coding-training-AI-Bub/519265b1-873c-4480-bbef-8bcc4259f4a2/scratchpad/review_out4.txt)",
+      "Bash(node -e \"console.log\\(require\\('./package.json'\\).dependencies.vue\\)\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173/)",
+      "Bash(node __TRACKED_VAR__/ask_coder.mjs __TRACKED_VAR__/sys_review5.txt __TRACKED_VAR__/user_review5.txt __TRACKED_VAR__/out_review5_max.txt Furen-max)",
+      "Bash(curl -s http://localhost:5174/asr)",
+      "Bash(rm -rf /tmp/ts_test /tmp/ts_test2 /tmp/test_noUncheck.ts 2>/dev/null; echo done)"
     ],
     "additionalDirectories": [
-      "C:\\Users\\Rabbir\\AppData\\Local\\Temp\\claude\\d--Coding-training-AI-Bub\\519265b1-873c-4480-bbef-8bcc4259f4a2\\scratchpad"
+      "C:\\Users\\Rabbir\\AppData\\Local\\Temp\\claude\\d--Coding-training-AI-Bub\\519265b1-873c-4480-bbef-8bcc4259f4a2\\scratchpad",
+      "\\tmp"
     ]
   }
 }
