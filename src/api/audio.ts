@@ -41,12 +41,13 @@ export async function transcribeAudio(
 ): Promise<TranscriptionResult> {
   // 上游收到超過上限的 body 會在瀏覽器還在上傳時直接斷線，fetch 只會看到
   // TypeError 而被轉成 NETWORK_ERROR，訊息會誤導成跨來源問題，所以在送出前擋下。
+  // 過長的音訊正常會先由呼叫端解碼並切段，這裡只是最後一道防線。
   if (payload.file.size > ASR_MAX_UPLOAD_BYTES - ASR_UPLOAD_OVERHEAD_BYTES) {
     throw new ApiError(
       413,
       'PAYLOAD_TOO_LARGE',
-      `檔案超過 ${ASR_MAX_UPLOAD_BYTES / 1024 / 1024} MB 上限（目前 ${formatMegabytes(payload.file.size)}）。` +
-        '影片會自動轉成 16kHz 音軌，約可容納 5 分鐘；更長的內容請先剪短再上傳。',
+      `單次上傳內容超過 ${ASR_MAX_UPLOAD_BYTES / 1024 / 1024} MB 上限（目前 ${formatMegabytes(payload.file.size)}）。` +
+        '過長的音訊通常會先自動切段再逐段上傳；若仍看到這個訊息，請改用較短的檔案。',
     )
   }
 

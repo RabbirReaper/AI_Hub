@@ -1,6 +1,7 @@
 // 取代樣板的 setStatus/showError/try-catch-finally 四重奏。7 個 view 全用它。
 import { ref } from 'vue'
 import { ApiError } from '@/api/http'
+import { UserFacingError } from '@/utils/userFacingError'
 import type { PanelStatus } from '@/types/ui'
 
 export interface RunGuardedOptions<T> {
@@ -37,7 +38,8 @@ export function usePanelStatus() {
       }
       status.value = 'err'
       statusText.value = ''
-      errorMessage.value = e instanceof ApiError ? e.message : '發生未預期的錯誤。'
+      errorMessage.value =
+        e instanceof ApiError || e instanceof UserFacingError ? e.message : '發生未預期的錯誤。'
       return undefined
     } finally {
       busy.value = false

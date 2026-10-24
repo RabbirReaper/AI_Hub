@@ -126,7 +126,34 @@ schema 是外部契約的鏡子：欄位名改掉會讓對照 AIHub 文件時失
   一律轉成 `SCHEMA_MISMATCH` 的 `ApiError`，訊息帶上 `context`（端點路徑）
   方便診斷是哪個端點的回應格式跟預期不符。
 
-## 9. 已知限制
+## 9. 語音轉文字（ASR）的長音訊切段策略
+
+AIHub 上游整個請求 body 上限為 10 MiB，所以超過上限的內容不能單次上傳，改在瀏覽器端切段：
+
+1. **何時解碼**：影片，以及大小超過單次上傳上限（10 MiB 扣 64 KiB 餘裕）的音檔，會先解碼成
+   16kHz 單聲道 PCM；上限內的音檔維持原檔直接上傳。解碼前會先檢查檔案大小，超過
+   `ASR_MAX_DECODE_BYTES`（3 GB）就直接報錯並建議先用 ffmpeg 抽出音軌，不會讀進記憶體。
+2. **取樣率與換算**：16kHz、單聲道、16-bit 的 wav 每秒 32,000 bytes，單次最多約 325 秒。
+3. **每段長度**：`ASR_CHUNK_SECONDS = 300`（5 分鐘，約 9.16 MiB），留有餘裕。
+4. **切點**：在每個預定切點往前 10 秒的範圍內，以 20ms 的短窗計算能量，挑最安靜的位置切，
+   避免把一個字切成兩半；找不到更安靜的位置就在預定位置硬切。各段不重疊（重疊會讓轉寫文字
+   重複而難以去除），用 `subarray` 切割，不複製資料。純函式在 `src/utils/audioChunk.ts`。
+5. **依序送出**：一段接一段送，不平行（避免 429，也保持順序），每段開始前回報進度
+   （面板顯示「轉寫中 2/3」），各段文字以換行接起來，`usage.seconds` 全部有值才加總。
+   某一段失敗就停止並丟出 `ChunkedTranscriptionError`（訊息前綴「第 k/n 段轉寫失敗：」），
+   其中帶著已完成段落的文字，面板會保留顯示。實作在 `src/api/audioChunked.ts`。
+6. **錯誤顯示**：解碼失敗、檔案太大這類非 API 錯誤用 `UserFacingError`
+   （`src/utils/userFacingError.ts`）丟出，`usePanelStatus` 會原樣顯示它與 `ApiError` 的 message，
+   其餘錯誤一律顯示「發生未預期的錯誤。」。
+
+7. **本機路徑模式（僅 `yarn dev`）**：瀏覽器讀不了本機路徑，也讀不進 GB 級的檔案，所以面板另提供
+   「本機檔案路徑」欄位。前端 POST 絕對路徑到 `/local-audio/pcm`（`vite.localAudio.ts`，只掛在
+   dev server 的 `configureServer`），由 Node 端的 ffmpeg 解出 16kHz 單聲道 s16le PCM 串流回來，
+   之後走同一套切段與依序轉寫。ffmpeg 預設從 PATH 找，可用環境變數 `FFMPEG_PATH` 指定。
+   因為這個端點能讀本機任何檔案的音訊，所以只接受同源請求與已存在檔案的絕對路徑，
+   且 `yarn build` / `preview` 沒有這個端點。
+
+## 10. 已知限制
 
 1. Vite dev proxy（`/aihub` → AIHub 正式站）只在 `yarn dev` 有效，
    `yarn build` + `yarn preview` 會 404。Production 部署需要自家後端代打，
