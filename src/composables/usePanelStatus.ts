@@ -3,9 +3,9 @@ import { ref } from 'vue'
 import { ApiError } from '@/api/http'
 import type { PanelStatus } from '@/types/ui'
 
-export interface RunGuardedOptions {
+export interface RunGuardedOptions<T> {
   busyText: string
-  okText?: string | ((result: unknown) => string)
+  okText?: string | ((result: T) => string)
 }
 
 export function usePanelStatus() {
@@ -14,7 +14,8 @@ export function usePanelStatus() {
   const errorMessage = ref('')
   const busy = ref(false)
 
-  async function runGuarded<T>(fn: () => Promise<T>, options: RunGuardedOptions): Promise<T | undefined> {
+  // okText 回呼直接拿型別化的 T，呼叫端不需要 `as` 斷言。
+  async function runGuarded<T>(fn: () => Promise<T>, options: RunGuardedOptions<T>): Promise<T | undefined> {
     status.value = 'busy'
     statusText.value = options.busyText
     errorMessage.value = ''

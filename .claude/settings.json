@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"/c/Users/Rabbir/AppData/Local/Temp/claude/d--Coding-training-AI-Bub/519265b1-873c-4480-bbef-8bcc4259f4a2/scratchpad\" *)",
+      "Bash(curl -s -X POST https://www.iai.nkust.edu.tw/aihub/v1/images/generations -H 'Authorization: Bearer sk-hgYYIpuzlmRE_gt5KAxPmQ' -H 'Content-Type: application/json' --data-binary @C:/Users/Rabbir/AppData/Local/Temp/claude/d--Coding-training-AI-Bub/519265b1-873c-4480-bbef-8bcc4259f4a2/scratchpad/test_image_payload.json --max-time 60 -w '\\\\n--- HTTP %{http_code}, 耗時 %{time_total}s ---\\\\n' -o C:/Users/Rabbir/AppData/Local/Temp/claude/d--Coding-training-AI-Bub/519265b1-873c-4480-bbef-8bcc4259f4a2/scratchpad/image_result.json)",
+      "Bash(node -e ' *)",
+      "Bash(curl -s -X POST https://www.iai.nkust.edu.tw/aihub/v1/embeddings -H 'Authorization: Bearer sk-hgYYIpuzlmRE_gt5KAxPmQ' -H 'Content-Type: application/json' --data-binary @C:/Users/Rabbir/AppData/Local/Temp/claude/d--Coding-training-AI-Bub/519265b1-873c-4480-bbef-8bcc4259f4a2/scratchpad/test_embed_payload.json --max-time 30 -w '\\\\n--- HTTP %{http_code} ---\\\\n' -o C:/Users/Rabbir/AppData/Local/Temp/claude/d--Coding-training-AI-Bub/519265b1-873c-4480-bbef-8bcc4259f4a2/scratchpad/embed_result.json)",
+      "Bash(mkdir -p \"/c/Users/Rabbir/AppData/Local/Temp/claude/d--Coding-training-AI-Bub/519265b1-873c-4480-bbef-8bcc4259f4a2/scratchpad\")",
+      "Bash(curl -s -X POST https://www.iai.nkust.edu.tw/aihub/v1/rerank -H 'Authorization: Bearer sk-hgYYIpuzlmRE_gt5KAxPmQ' -H 'Content-Type: application/json' --data-binary @C:/Users/Rabbir/AppData/Local/Temp/claude/d--Coding-training-AI-Bub/519265b1-873c-4480-bbef-8bcc4259f4a2/scratchpad/test_rerank_payload.json --max-time 30 -w '\\\\n--- HTTP %{http_code} ---\\\\n')",
+      "Bash(rm -rf dist)",
+      "Bash(rm -f C:/Users/Rabbir/AppData/Local/Temp/claude/d--Coding-training-AI-Bub/519265b1-873c-4480-bbef-8bcc4259f4a2/scratchpad/user_review4.txt C:/Users/Rabbir/AppData/Local/Temp/claude/d--Coding-training-AI-Bub/519265b1-873c-4480-bbef-8bcc4259f4a2/scratchpad/review_out4.txt)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\Rabbir\\AppData\\Local\\Temp\\claude\\d--Coding-training-AI-Bub\\519265b1-873c-4480-bbef-8bcc4259f4a2\\scratchpad"
+    ]
+  }
+}
