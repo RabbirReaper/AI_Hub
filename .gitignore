@@ -40,3 +40,6 @@ __screenshots__/
 
 test-results/
 playwright-report/
+
+# 影片筆記輸出（vite.ytNotes.ts，可用 YT_NOTES_DIR 改位置）
+notes/

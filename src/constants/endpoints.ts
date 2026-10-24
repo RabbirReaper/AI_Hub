@@ -8,4 +8,5 @@ export const ENDPOINTS = {
   embed: 'POST /v1/embeddings',
   rerank: 'POST /v1/rerank',
   models: 'GET /v1/models',
+  ytNotes: 'POST /local-yt/download',
 } as const

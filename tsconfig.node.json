@@ -4,6 +4,8 @@
   "include": [
     "vite.config.*",
     "vite.localAudio.*",
+    "vite.ytNotes.*",
+    "vite.ytNotesUtils.*",
     "vitest.config.*",
     "cypress.config.*",
     "playwright.config.*",

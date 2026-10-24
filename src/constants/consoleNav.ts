@@ -9,4 +9,5 @@ export const CONSOLE_NAV: ConsoleNavItem[] = [
   { routeName: 'console-embed', label: '向量化', index: '05' },
   { routeName: 'console-rerank', label: '重排序', index: '06' },
   { routeName: 'console-models', label: '模型清單', index: '07' },
+  { routeName: 'console-yt-notes', label: '影片筆記', index: '08' },
 ]

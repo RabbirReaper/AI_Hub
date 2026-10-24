@@ -49,6 +49,12 @@ export const consoleRoutes: RouteRecordRaw[] = [
         component: () => import('@/views/console/ModelsView.vue'),
         meta: { title: '模型清單' },
       },
+      {
+        path: 'yt-notes',
+        name: 'console-yt-notes',
+        component: () => import('@/views/console/YtNotesView.vue'),
+        meta: { title: '影片筆記' },
+      },
     ],
   },
   { path: '/:pathMatch(.*)*', redirect: { name: 'console-chat' } },

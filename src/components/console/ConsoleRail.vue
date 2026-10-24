@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// 側邊導覽列，由 CONSOLE_NAV 渲染 7 條端點連結；<768px 時用 CSS 轉橫向 scroll。
+// 側邊導覽列，由 CONSOLE_NAV 渲染 8 條端點連結；<768px 時用 CSS 轉橫向 scroll。
 import { useRoute } from 'vue-router'
 import { CONSOLE_NAV } from '@/constants/consoleNav'
 

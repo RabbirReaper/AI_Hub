@@ -5,10 +5,11 @@ import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import tailwindcss from '@tailwindcss/vite'
 import { localAudioPlugin } from './vite.localAudio'
+import { ytNotesPlugin } from './vite.ytNotes.ts'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue(), vueDevTools(), tailwindcss(), localAudioPlugin()],
+  plugins: [vue(), vueDevTools(), tailwindcss(), localAudioPlugin(), ytNotesPlugin()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

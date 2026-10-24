@@ -153,7 +153,56 @@ AIHub 上游整個請求 body 上限為 10 MiB，所以超過上限的內容不�
    因為這個端點能讀本機任何檔案的音訊，所以只接受同源請求與已存在檔案的絕對路徑，
    且 `yarn build` / `preview` 沒有這個端點。
 
-## 10. 已知限制
+## 10. 影片筆記
+
+「影片筆記」面板輸入影片網址（YouTube 等 yt-dlp 支援的網站），自動產出逐字稿與重點整理兩個 .md 檔。
+整條流程只有 `yarn dev` 能用，因為下載與寫檔都在開發伺服器（`vite.ytNotes.ts`）上做。
+
+**流程**
+
+1. `POST /local-yt/download`：yt-dlp 只下載音軌（`-f "ba[ext=m4a]/ba/b"`）到系統暫存資料夾，
+   回傳 `{ jobId, audioPath, meta }`。
+2. 前端用 §9 的本機路徑模式（`/local-audio/pcm`）把音檔解成 16kHz PCM，切段、依序轉寫，
+   轉簡體為繁體的開關與 ASR 面板一致。
+3. 逐字稿交給對話模型（預設 `Furen-std`，清單沒有時退回對話分類的預設）整理重點，
+   實作在 `src/api/summarize.ts`，提示詞在 `src/constants/ytNotesPrompts.ts`。逐字稿超過
+   `SUMMARY_CHUNK_CHARS`（12000 字，保守估計的上下文長度，非實測值）時，先依換行與句子切段，
+   各段依序整理成條列，最後再交給模型合併成最終格式；回答只取 `content`，忽略
+   `reasoning_content`，並去掉 `<think>...</think>`。
+4. `POST /local-yt/save`：把 `<baseName>.逐字稿.md` 與 `<baseName>.重點.md` 寫進輸出資料夾，
+   baseName 為 `{upload_date} {title} [{id}]`。
+5. `POST /local-yt/cleanup`：不論成功或失敗，前端都會在 `finally` 呼叫，刪掉該次下載的暫存資料夾。
+
+**失敗時的處理**：重點整理失敗時仍會存逐字稿並提示「逐字稿已儲存，重點整理失敗：…」；轉寫中途失敗
+且已有完成的段落時，會把已完成的部分存成檔名帶「（部分）」的逐字稿。
+
+**端點與安全限制**（比照 `/local-audio/pcm`）
+
+- 三個端點都只接受 POST 與同源請求（有帶 `Origin` 時必須與 `Host` 相同）。
+- `download`：網址必須能被 `new URL()` 解析且是 `http:` / `https:`；yt-dlp 的參數一律用陣列傳給
+  `spawn`、不經過 shell，且固定帶 `--ignore-config`（不讓使用者的設定檔加料）、`--no-playlist`，
+  網址放在 `--` 之後，避免以 `-` 開頭的字串被當成選項。輸出檔名只用影片 id，避開中文檔名的編碼問題。
+- 標題等 metadata 讀 yt-dlp 寫出的 `.info.json`（UTF-8），不解析 stdout：Windows 上 yt-dlp 的
+  console 輸出中文會變成亂碼。
+- 使用者在下載途中關掉頁面（連線中斷）時，會結束 yt-dlp 並刪掉該次的暫存資料夾；
+  dev server 啟動時也會清掉暫存根目錄裡超過 24 小時的殘留資料夾。
+- `cleanup`：`jobId` 必須是 UUID，且解析後的路徑必須在暫存根目錄底下，前端不能指定任意路徑來刪除。
+- `save`：baseName 會過濾 `<>:"/\|?*` 與控制字元、去掉結尾的點和空白、限制 120 字，並確認最終路徑
+  在輸出資料夾內；檔案已存在時不覆蓋，兩個檔案一起加上 ` (2)`、` (3)` 尾碼。重點檔中指向逐字稿的
+  檔名先用佔位字串，寫檔時才換成實際檔名。
+- yt-dlp 失敗時回 422 並附上 stderr 最後幾行；403、格式不可用通常是 yt-dlp 版本太舊，訊息會提示執行
+  `yt-dlp -U`。
+- 純函式（網址驗證、檔名過濾、路徑檢查、yt-dlp 參數）在 `vite.ytNotesUtils.ts`，有單元測試。
+
+**環境變數**
+
+| 變數 | 說明 | 預設 |
+| --- | --- | --- |
+| `YTDLP_PATH` | yt-dlp 執行檔路徑 | 從 PATH 找 `yt-dlp` |
+| `FFMPEG_PATH` | ffmpeg 執行檔路徑（轉成 PCM 時用） | 從 PATH 找 `ffmpeg` |
+| `YT_NOTES_DIR` | 筆記輸出資料夾 | 專案根目錄的 `notes/`（已加入 `.gitignore`） |
+
+## 11. 已知限制
 
 1. Vite dev proxy（`/aihub` → AIHub 正式站）只在 `yarn dev` 有效，
    `yarn build` + `yarn preview` 會 404。Production 部署需要自家後端代打，
