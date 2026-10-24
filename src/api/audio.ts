@@ -8,6 +8,7 @@
 // JSON 錯誤 body 被當成 blob 原樣吞掉，錯誤訊息就讀不到了，故用 fetch 自行
 // 判斷 res.ok 再決定要 .blob() 還是把 body 當文字解析丟 describeApiError。
 import {
+  ApiError,
   assertFetchOk,
   buildAuthHeaders,
   describeApiError,
@@ -20,6 +21,8 @@ import {
   type AsrLanguage,
   type SpeechRequest,
 } from './schemas/audio.schema'
+import { ASR_MAX_UPLOAD_BYTES, ASR_UPLOAD_OVERHEAD_BYTES } from '@/constants/asrOptions'
+import { formatMegabytes } from '@/utils/format'
 
 export interface TranscribeAudioPayload {
   file: Blob
@@ -36,6 +39,17 @@ export interface TranscriptionResult {
 export async function transcribeAudio(
   payload: TranscribeAudioPayload,
 ): Promise<TranscriptionResult> {
+  // 上游收到超過上限的 body 會在瀏覽器還在上傳時直接斷線，fetch 只會看到
+  // TypeError 而被轉成 NETWORK_ERROR，訊息會誤導成跨來源問題，所以在送出前擋下。
+  if (payload.file.size > ASR_MAX_UPLOAD_BYTES - ASR_UPLOAD_OVERHEAD_BYTES) {
+    throw new ApiError(
+      413,
+      'PAYLOAD_TOO_LARGE',
+      `檔案超過 ${ASR_MAX_UPLOAD_BYTES / 1024 / 1024} MB 上限（目前 ${formatMegabytes(payload.file.size)}）。` +
+        '影片會自動轉成 16kHz 音軌，約可容納 5 分鐘；更長的內容請先剪短再上傳。',
+    )
+  }
+
   const form = new FormData()
   form.append('file', payload.file, payload.filename)
   form.append('model', payload.model)

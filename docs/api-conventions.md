@@ -53,7 +53,7 @@ schema 是外部契約的鏡子：欄位名改掉會讓對照 AIHub 文件時失
 
 ## 4. 錯誤代碼（ApiCode）清單
 
-定義於 `src/constants/apiCodes.ts`。前八個對應常見 HTTP 狀態；後四個是本專案
+定義於 `src/constants/apiCodes.ts`。前八個（含 `OK`）對應常見 HTTP 狀態；後四個是本專案
 特有，用來把「外部 API 的格式漂移/斷網/取消」也變成可診斷、可分支處理的錯誤：
 
 | code | 對應 status | 說明 |
@@ -63,6 +63,7 @@ schema 是外部契約的鏡子：欄位名改掉會讓對照 AIHub 文件時失
 | `UNAUTHORIZED` | 401 | 金鑰未通過驗證；攔截器會順便呼叫 `markInvalid` |
 | `FORBIDDEN` | 403 | 沒有權限執行這個請求 |
 | `NOT_FOUND` | 404 | 端點不存在 |
+| `PAYLOAD_TOO_LARGE` | 413 | 請求 body 超過上限。AIHub 上游限制整個請求為 10 MiB（10,485,760 bytes），超過時上游會在瀏覽器還在上傳時直接斷線，fetch 只會看到 `TypeError` 而變成 `NETWORK_ERROR`，所以 `transcribeAudio` 在送出前就先檢查檔案大小（預留 64 KiB 給 multipart 欄位與檔名）並丟出這個 code；真的收到 413 回應時 `describeApiError` 也會轉成它 |
 | `TOO_MANY_REQUESTS` | 429 | 請求過於頻繁 |
 | `INTERNAL_ERROR` | 500+ 或未知狀況 | 伺服器端錯誤 |
 | `NETWORK_ERROR` | 無 status | fetch 拋出 `TypeError`，多半是 CORS 或斷網 |

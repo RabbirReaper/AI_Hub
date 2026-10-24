@@ -84,6 +84,14 @@ export function describeApiError(status: number | undefined, body: unknown): Api
       detail,
     )
   }
+  if (status === 413) {
+    return new ApiError(
+      status,
+      'PAYLOAD_TOO_LARGE',
+      `上傳內容超過 AIHub 的大小上限（413）。${detail ? ' ' + detail : ''}`,
+      detail,
+    )
+  }
   if (status === 429) {
     return new ApiError(
       status,

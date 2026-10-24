@@ -1,4 +1,5 @@
-// 本專案自有的錯誤代碼。前八個對應常見 HTTP 狀態；後四個是本專案特有：
+// 本專案自有的錯誤代碼。前八個對應常見 HTTP 狀態（含 PAYLOAD_TOO_LARGE：上游 413，
+// 也用於送出前先擋下超過上限的上傳）；後四個是本專案特有：
 // NETWORK_ERROR（fetch TypeError，多半是 CORS 或斷網）、
 // ABORTED（使用者按停止）、
 // SCHEMA_MISMATCH（zod parse 失敗 = AIHub 回傳格式與預期不符，是本專案把外部格式
@@ -10,6 +11,7 @@ export const API_CODES = [
   'UNAUTHORIZED',
   'FORBIDDEN',
   'NOT_FOUND',
+  'PAYLOAD_TOO_LARGE',
   'TOO_MANY_REQUESTS',
   'INTERNAL_ERROR',
   'NETWORK_ERROR',

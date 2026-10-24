@@ -1,5 +1,10 @@
 // 影片沒辦法直接送 ASR，先在瀏覽器解碼音軌、混成單聲道 16-bit PCM wav 再上傳。
-// 邏輯逐字移植自樣板 aihub-console.html L1241-1307，只加型別與 noUncheckedIndexedAccess 防護。
+// 邏輯移植自樣板 aihub-console.html L1241-1307，加上型別與 noUncheckedIndexedAccess 防護。
+//
+// 解碼時直接重新取樣到 16kHz：AIHub 上游整個請求 body 上限為 10 MiB，若用裝置預設
+// 取樣率（通常 48kHz），wav 每秒約 96KB，幾分鐘的影片就超過上限；而 Whisper 內部本來
+// 就只用 16kHz 單聲道，降取樣不影響辨識品質，每秒降到約 32KB，10 MiB 約可容納 5 分 27 秒。
+import { ASR_TARGET_SAMPLE_RATE } from '@/constants/asrOptions'
 
 export function isVideoFile(file: File): boolean {
   return file.type.startsWith('video/') || /\.(mp4|mov|webm|mkv|avi|m4v)$/i.test(file.name)
@@ -45,21 +50,22 @@ export function encodeWav(audioBuffer: AudioBuffer): Blob {
 }
 
 // Safari <15 的 decodeAudioData 只支援 callback 形式，目前不處理。
+// 用 OfflineAudioContext 而非 AudioContext 解碼：decodeAudioData 會重新取樣到 context
+// 的取樣率，而 OfflineAudioContext 可指定 16kHz、不佔用音訊裝置，也不需要 close()。
 export async function extractAudioTrack(file: File): Promise<Blob> {
-  const AudioCtx = window.AudioContext ?? window.webkitAudioContext
-  if (!AudioCtx) {
+  const OfflineCtx = window.OfflineAudioContext ?? window.webkitOfflineAudioContext
+  if (!OfflineCtx) {
     throw new Error('這個瀏覽器不支援音訊解碼，請改用轉檔工具匯出音軌後再上傳。')
   }
   const buf = await file.arrayBuffer()
-  const ctx = new AudioCtx()
   try {
+    // 只用來解碼，長度給最小值 1 即可，實際長度由解碼結果決定
+    const ctx = new OfflineCtx(1, 1, ASR_TARGET_SAMPLE_RATE)
     const decoded = await ctx.decodeAudioData(buf)
     return encodeWav(decoded)
   } catch {
     throw new Error(
       '無法從這個檔案取出音軌，可能是編碼格式瀏覽器不支援。請先轉成 mp3 或 wav 再上傳。',
     )
-  } finally {
-    await ctx.close()
   }
 }
