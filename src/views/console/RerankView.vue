@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 重排序面板：候選文件用請求送出當下的快照（sentDocs）做 fallback 查找。
 import { ref } from 'vue'
 import { useModelSelect } from '@/composables/useModelSelect'
 import { usePanelStatus } from '@/composables/usePanelStatus'

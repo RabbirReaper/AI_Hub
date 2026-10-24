@@ -34,7 +34,9 @@ export default defineConfig({
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
     actionTimeout: 0,
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: process.env.CI ? 'http://localhost:4173' : 'http://localhost:5173',
+    // 用專屬 port 5183（而非 create-vue 預設的 5173），避免跟同機器上其他
+    // 專案的 dev server 撞 port 造成 reuseExistingServer 誤判、測試打錯站。
+    baseURL: process.env.CI ? 'http://localhost:4173' : 'http://localhost:5183',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -44,23 +46,13 @@ export default defineConfig({
   },
 
   /* Configure projects for major browsers */
+  // 只保留 chromium：這台機器沒安裝 firefox/webkit 的瀏覽器引擎二進位檔，
+  // 要啟用需執行 `yarn playwright install firefox webkit`。
   projects: [
     {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-      },
-    },
-    {
-      name: 'firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-      },
-    },
-    {
-      name: 'webkit',
-      use: {
-        ...devices['Desktop Safari'],
       },
     },
 
@@ -103,8 +95,8 @@ export default defineConfig({
      * Use the preview server on CI for more realistic testing.
      * Playwright will re-use the local server if there is already a dev-server running.
      */
-    command: process.env.CI ? 'npm run preview' : 'npm run dev',
-    port: process.env.CI ? 4173 : 5173,
+    command: process.env.CI ? 'npm run preview' : 'npm run dev -- --port 5183 --strictPort',
+    port: process.env.CI ? 4173 : 5183,
     reuseExistingServer: !process.env.CI,
   },
 })

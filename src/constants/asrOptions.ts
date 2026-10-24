@@ -1,3 +1,4 @@
+// AsrView 的語言下拉選項與其他靜態預設值。
 import type { SelectOption } from '@/types/ui'
 
 export const ASR_LANGUAGE_OPTIONS: SelectOption[] = [

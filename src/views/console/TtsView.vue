@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 文字轉語音面板：objectURL 的建立與釋放交給 useObjectUrl 管理，避免洩漏。
 import { ref } from 'vue'
 import { useModelSelect } from '@/composables/useModelSelect'
 import { usePanelStatus } from '@/composables/usePanelStatus'

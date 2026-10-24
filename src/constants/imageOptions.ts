@@ -1,3 +1,4 @@
+// ImageView 的尺寸下拉選項與預設值。
 import type { SelectOption } from '@/types/ui'
 
 export const IMAGE_SIZE_OPTIONS: SelectOption[] = [

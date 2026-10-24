@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 對話面板：串流時就地 mutate chatSession store 回傳的訊息物件，Vue 自動重繪。
 import { ref } from 'vue'
 import { useModelSelect } from '@/composables/useModelSelect'
 import { useChatStream } from '@/composables/useChatStream'
@@ -89,7 +90,8 @@ function handleClear(): void {
       <BaseStatus :status="busy ? 'busy' : 'idle'" :text="statusText" />
     </div>
     <p class="text-sm text-ink-faint">
-      對話會帶入完整歷史訊息。部分模型（如 Furen-large）會回傳推理過程，介面會收在「思考過程」摺疊區，不混入正式回覆。
+      對話會帶入完整歷史訊息。部分模型（如
+      Furen-large）會回傳推理過程，介面會收在「思考過程」摺疊區，不混入正式回覆。
     </p>
   </ConsolePanel>
 </template>

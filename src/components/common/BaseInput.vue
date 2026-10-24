@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 通用輸入框，v-model 統一走 string（即使 type="number" 也是字串，呼叫端自行 parse）。
 withDefaults(
   defineProps<{
     modelValue: string | number

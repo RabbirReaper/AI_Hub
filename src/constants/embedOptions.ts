@@ -1,3 +1,4 @@
+// EmbedView 與 RerankView 共用的下拉選項與預設輸入文字。
 import type { SelectOption } from '@/types/ui'
 
 export const ENCODING_FORMAT_OPTIONS: SelectOption[] = [

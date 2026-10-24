@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 通用 checkbox 開關，對應樣板 .toggle。
 defineProps<{
   modelValue: boolean
 }>()

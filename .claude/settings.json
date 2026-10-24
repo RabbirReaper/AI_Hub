@@ -13,7 +13,13 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173/)",
       "Bash(node __TRACKED_VAR__/ask_coder.mjs __TRACKED_VAR__/sys_review5.txt __TRACKED_VAR__/user_review5.txt __TRACKED_VAR__/out_review5_max.txt Furen-max)",
       "Bash(curl -s http://localhost:5174/asr)",
-      "Bash(rm -rf /tmp/ts_test /tmp/ts_test2 /tmp/test_noUncheck.ts 2>/dev/null; echo done)"
+      "Bash(rm -rf /tmp/ts_test /tmp/ts_test2 /tmp/test_noUncheck.ts 2>/dev/null; echo done)",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\(p.devDependencies['@vue/test-utils'], p.devDependencies['vitest'], p.devDependencies['jsdom']\\)\")",
+      "Bash(node --experimental-strip-types -e ' *)",
+      "Bash(curl -s -o /dev/null -w \"5173: %{http_code}\\\\n\" http://localhost:5173/)",
+      "Bash(curl -s -o /dev/null -w \"5174: %{http_code}\\\\n\" http://localhost:5174/)",
+      "Bash(curl -s http://localhost:5173/)",
+      "Bash(yarn playwright *)"
     ],
     "additionalDirectories": [
       "C:\\Users\\Rabbir\\AppData\\Local\\Temp\\claude\\d--Coding-training-AI-Bub\\519265b1-873c-4480-bbef-8bcc4259f4a2\\scratchpad",

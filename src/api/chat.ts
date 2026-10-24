@@ -5,7 +5,14 @@
 // SSE 每行 JSON 以 chatStreamChunkSchema.safeParse 檢查，失敗則跳過該行
 // （串流中單行壞掉不該中斷整段輸出）—— 與非串流路徑的 parseOrThrow 不同，
 // 非串流一失敗就整個請求判定為 SCHEMA_MISMATCH，串流則是逐行盡力而為。
-import { http, parseOrThrow, assertFetchOk, toNetworkError, buildAuthHeaders, AIHUB_BASE_URL } from './http'
+import {
+  http,
+  parseOrThrow,
+  assertFetchOk,
+  toNetworkError,
+  buildAuthHeaders,
+  AIHUB_BASE_URL,
+} from './http'
 import {
   chatCompletionResponseSchema,
   chatStreamChunkSchema,
@@ -34,7 +41,10 @@ export async function streamChatCompletion(
   try {
     res = await fetch(`${AIHUB_BASE_URL}/chat/completions`, {
       method: 'POST',
-      headers: buildAuthHeaders({ 'Content-Type': 'application/json', accept: 'text/event-stream' }),
+      headers: buildAuthHeaders({
+        'Content-Type': 'application/json',
+        accept: 'text/event-stream',
+      }),
       body: JSON.stringify({ ...payload, stream: true }),
       signal,
     })

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 影像生成面板：張數在送出前 clamp 到 1-4，避免繞過 input[max] 送出超界值。
 import { ref } from 'vue'
 import { useModelSelect } from '@/composables/useModelSelect'
 import { usePanelStatus } from '@/composables/usePanelStatus'
@@ -14,7 +15,11 @@ import BaseStatus from '@/components/common/BaseStatus.vue'
 import BaseErrorBox from '@/components/common/BaseErrorBox.vue'
 import ImageGallery from '@/components/image/ImageGallery.vue'
 import { ENDPOINTS } from '@/constants/endpoints'
-import { IMAGE_SIZE_OPTIONS, IMAGE_DEFAULT_SIZE, IMAGE_DEFAULT_PROMPT } from '@/constants/imageOptions'
+import {
+  IMAGE_SIZE_OPTIONS,
+  IMAGE_DEFAULT_SIZE,
+  IMAGE_DEFAULT_PROMPT,
+} from '@/constants/imageOptions'
 import type { GeneratedImage, ImageSize } from '@/types/image'
 
 const { selected: selectedModel, options: modelOptions } = useModelSelect('image')
@@ -71,8 +76,16 @@ async function handleRun(): Promise<void> {
     </div>
 
     <BaseErrorBox v-if="status === 'err' && errorMessage" :message="errorMessage" />
-    <ImageGallery v-if="result.length" :images="result" :prompt="prompt" :size="size" :model="selectedModel" />
+    <ImageGallery
+      v-if="result.length"
+      :images="result"
+      :prompt="prompt"
+      :size="size"
+      :model="selectedModel"
+    />
 
-    <p class="text-sm text-ink-faint">回傳為 base64，圖片在瀏覽器內解碼顯示。要保存請在圖片上按右鍵另存。</p>
+    <p class="text-sm text-ink-faint">
+      回傳為 base64，圖片在瀏覽器內解碼顯示。要保存請在圖片上按右鍵另存。
+    </p>
   </ConsolePanel>
 </template>

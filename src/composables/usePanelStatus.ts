@@ -15,7 +15,10 @@ export function usePanelStatus() {
   const busy = ref(false)
 
   // okText 回呼直接拿型別化的 T，呼叫端不需要 `as` 斷言。
-  async function runGuarded<T>(fn: () => Promise<T>, options: RunGuardedOptions<T>): Promise<T | undefined> {
+  async function runGuarded<T>(
+    fn: () => Promise<T>,
+    options: RunGuardedOptions<T>,
+  ): Promise<T | undefined> {
     status.value = 'busy'
     statusText.value = options.busyText
     errorMessage.value = ''

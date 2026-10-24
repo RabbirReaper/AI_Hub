@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 虛線框空狀態提示，用於「尚無資料」等場景。
 defineProps<{
   text: string
 }>()

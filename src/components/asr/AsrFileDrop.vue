@@ -40,6 +40,12 @@ function openPicker(): void {
     @drop="handleDrop"
   >
     <span class="text-ink-soft">{{ label }}</span>
-    <input ref="inputRef" type="file" :accept="ASR_ACCEPT" class="hidden" @change="handleInputChange" />
+    <input
+      ref="inputRef"
+      type="file"
+      :accept="ASR_ACCEPT"
+      class="hidden"
+      @change="handleInputChange"
+    />
   </div>
 </template>

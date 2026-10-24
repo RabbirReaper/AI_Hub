@@ -1,3 +1,4 @@
+// TtsView 的輸出格式下拉選項與預設值。
 import type { SelectOption } from '@/types/ui'
 
 export const TTS_FORMAT_OPTIONS: SelectOption[] = [

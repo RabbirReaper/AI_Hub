@@ -7,8 +7,19 @@
 // synthesizeSpeech 回二進位 blob：axios responseType: 'blob' 會讓失敗時的
 // JSON 錯誤 body 被當成 blob 原樣吞掉，錯誤訊息就讀不到了，故用 fetch 自行
 // 判斷 res.ok 再決定要 .blob() 還是把 body 當文字解析丟 describeApiError。
-import { assertFetchOk, buildAuthHeaders, describeApiError, toNetworkError, parseOrThrow, AIHUB_BASE_URL } from './http'
-import { transcriptionResponseSchema, type AsrLanguage, type SpeechRequest } from './schemas/audio.schema'
+import {
+  assertFetchOk,
+  buildAuthHeaders,
+  describeApiError,
+  toNetworkError,
+  parseOrThrow,
+  AIHUB_BASE_URL,
+} from './http'
+import {
+  transcriptionResponseSchema,
+  type AsrLanguage,
+  type SpeechRequest,
+} from './schemas/audio.schema'
 
 export interface TranscribeAudioPayload {
   file: Blob
@@ -22,7 +33,9 @@ export interface TranscriptionResult {
   seconds: number | undefined
 }
 
-export async function transcribeAudio(payload: TranscribeAudioPayload): Promise<TranscriptionResult> {
+export async function transcribeAudio(
+  payload: TranscribeAudioPayload,
+): Promise<TranscriptionResult> {
   const form = new FormData()
   form.append('file', payload.file, payload.filename)
   form.append('model', payload.model)

@@ -61,22 +61,52 @@ function extractDetail(body: unknown): string {
 export function describeApiError(status: number | undefined, body: unknown): ApiError {
   const detail = extractDetail(body)
   if (status === 401) {
-    return new ApiError(status, 'UNAUTHORIZED', `金鑰未通過驗證（401）。請確認 API 金鑰仍有效。${detail ? ' ' + detail : ''}`, detail)
+    return new ApiError(
+      status,
+      'UNAUTHORIZED',
+      `金鑰未通過驗證（401）。請確認 API 金鑰仍有效。${detail ? ' ' + detail : ''}`,
+      detail,
+    )
   }
   if (status === 403) {
-    return new ApiError(status, 'FORBIDDEN', `沒有權限執行這個請求（403）。${detail ? ' ' + detail : ''}`, detail)
+    return new ApiError(
+      status,
+      'FORBIDDEN',
+      `沒有權限執行這個請求（403）。${detail ? ' ' + detail : ''}`,
+      detail,
+    )
   }
   if (status === 404) {
-    return new ApiError(status, 'NOT_FOUND', `找不到這個端點（404）。${detail ? ' ' + detail : ''}`, detail)
+    return new ApiError(
+      status,
+      'NOT_FOUND',
+      `找不到這個端點（404）。${detail ? ' ' + detail : ''}`,
+      detail,
+    )
   }
   if (status === 429) {
-    return new ApiError(status, 'TOO_MANY_REQUESTS', `請求過於頻繁（429），請稍候再試。${detail ? ' ' + detail : ''}`, detail)
+    return new ApiError(
+      status,
+      'TOO_MANY_REQUESTS',
+      `請求過於頻繁（429），請稍候再試。${detail ? ' ' + detail : ''}`,
+      detail,
+    )
   }
   if (status !== undefined && status >= 500) {
-    return new ApiError(status, 'INTERNAL_ERROR', `伺服器端錯誤（${status}），稍後重試。${detail ? ' ' + detail : ''}`, detail)
+    return new ApiError(
+      status,
+      'INTERNAL_ERROR',
+      `伺服器端錯誤（${status}），稍後重試。${detail ? ' ' + detail : ''}`,
+      detail,
+    )
   }
   if (status !== undefined && status >= 400) {
-    return new ApiError(status, 'BAD_REQUEST', `請求失敗（${status}）。${detail ? ' ' + detail : ''}`, detail)
+    return new ApiError(
+      status,
+      'BAD_REQUEST',
+      `請求失敗（${status}）。${detail ? ' ' + detail : ''}`,
+      detail,
+    )
   }
   return new ApiError(status, 'INTERNAL_ERROR', detail || '請求失敗。', detail)
 }

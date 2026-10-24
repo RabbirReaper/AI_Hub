@@ -19,11 +19,22 @@ const modelsStore = useModelsStore()
         重新載入
       </BaseButton>
       <BaseStatus
-        :status="modelsStore.health === 'loading' ? 'busy' : modelsStore.health === 'live' ? 'ok' : 'idle'"
-        :text="modelsStore.health === 'loading' ? '載入中' : modelsStore.health === 'live' ? `${modelsStore.models.length} 個可用模型` : ''"
+        :status="
+          modelsStore.health === 'loading' ? 'busy' : modelsStore.health === 'live' ? 'ok' : 'idle'
+        "
+        :text="
+          modelsStore.health === 'loading'
+            ? '載入中'
+            : modelsStore.health === 'live'
+              ? `${modelsStore.models.length} 個可用模型`
+              : ''
+        "
       />
     </div>
-    <BaseErrorBox v-if="modelsStore.health === 'down' && modelsStore.errorMessage" :message="modelsStore.errorMessage" />
+    <BaseErrorBox
+      v-if="modelsStore.health === 'down' && modelsStore.errorMessage"
+      :message="modelsStore.errorMessage"
+    />
     <ModelTable v-if="modelsStore.models.length" />
     <p class="text-sm text-ink-faint">
       分類是依模型名稱推測，用來決定各面板的預設選項；若平台新增模型，重新載入後即會出現在下拉選單。

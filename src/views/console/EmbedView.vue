@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 向量化面板：多行輸入時額外算兩兩餘弦相似度，base64 編碼格式則不計算。
 import { ref, computed } from 'vue'
 import { useModelSelect } from '@/composables/useModelSelect'
 import { usePanelStatus } from '@/composables/usePanelStatus'
@@ -35,7 +36,9 @@ const numericVectors = computed<{ originalIndex: number; vector: number[] }[]>(
   () =>
     result.value?.data
       .map((item, originalIndex) => ({ originalIndex, vector: item.embedding }))
-      .filter((entry): entry is { originalIndex: number; vector: number[] } => Array.isArray(entry.vector)) ?? [],
+      .filter((entry): entry is { originalIndex: number; vector: number[] } =>
+        Array.isArray(entry.vector),
+      ) ?? [],
 )
 const dims = computed<number | null>(() => numericVectors.value[0]?.vector.length ?? null)
 const similarityPairs = computed(() => {
@@ -101,11 +104,15 @@ async function handleRun(): Promise<void> {
         </div>
         <div class="flex flex-col gap-0.5">
           <span class="text-[10.5px] tracking-widest text-ink-faint uppercase">維度</span>
-          <span class="text-[15px] text-ink tabular-nums">{{ dims !== null ? dims : 'base64' }}</span>
+          <span class="text-[15px] text-ink tabular-nums">{{
+            dims !== null ? dims : 'base64'
+          }}</span>
         </div>
         <div class="flex flex-col gap-0.5">
           <span class="text-[10.5px] tracking-widest text-ink-faint uppercase">Tokens</span>
-          <span class="text-[15px] text-ink tabular-nums">{{ result.usage?.total_tokens ?? '—' }}</span>
+          <span class="text-[15px] text-ink tabular-nums">{{
+            result.usage?.total_tokens ?? '—'
+          }}</span>
         </div>
       </div>
 

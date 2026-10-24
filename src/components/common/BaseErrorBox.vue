@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 錯誤訊息框，顯示 ApiError.message。
 defineProps<{
   message: string
 }>()

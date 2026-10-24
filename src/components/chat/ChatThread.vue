@@ -23,8 +23,15 @@ watch(
 </script>
 
 <template>
-  <div ref="threadEl" class="flex max-h-[46vh] min-h-[150px] flex-col gap-3.5 overflow-y-auto scroll-smooth px-0.5 py-1" aria-live="polite">
-    <BaseEmpty v-if="!messages.length" text="還沒有訊息。在下方輸入問題後送出，對話會保留在這一輪的歷史中。" />
+  <div
+    ref="threadEl"
+    class="flex max-h-[46vh] min-h-[150px] flex-col gap-3.5 overflow-y-auto scroll-smooth px-0.5 py-1"
+    aria-live="polite"
+  >
+    <BaseEmpty
+      v-if="!messages.length"
+      text="還沒有訊息。在下方輸入問題後送出，對話會保留在這一輪的歷史中。"
+    />
     <ChatBubble v-for="(m, i) in messages" :key="i" :message="m" />
   </div>
 </template>

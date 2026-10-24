@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// usePanelStatus 的視覺呈現：idle 無顯示、busy 轉圈、ok/err 變色。
 import type { PanelStatus } from '@/types/ui'
 
 withDefaults(

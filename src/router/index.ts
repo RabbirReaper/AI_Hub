@@ -1,3 +1,4 @@
+// 路由入口：掛上 consoleRoutes，並在每次切換後依 meta.title 更新 <title>。
 import { createRouter, createWebHistory } from 'vue-router'
 import { consoleRoutes } from './routes/console'
 import { SITE_TITLE_TEMPLATE } from '@/constants/site'

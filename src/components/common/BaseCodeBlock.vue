@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 等寬字體文字區塊，用於顯示轉寫結果、向量預覽等純文字輸出。
 defineProps<{
   content: string
 }>()

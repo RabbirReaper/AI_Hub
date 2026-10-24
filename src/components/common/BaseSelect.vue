@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 通用下拉選單，v-model 統一走 string。
 import type { SelectOption } from '@/types/ui'
 
 withDefaults(

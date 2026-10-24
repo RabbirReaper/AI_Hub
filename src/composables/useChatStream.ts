@@ -21,7 +21,10 @@ export function useChatStream() {
   const errorMessage = ref('')
   let controller: AbortController | null = null
 
-  function buildPayload(options: SendChatOptions, messages: ChatCompletionRequest['messages']): ChatCompletionRequest {
+  function buildPayload(
+    options: SendChatOptions,
+    messages: ChatCompletionRequest['messages'],
+  ): ChatCompletionRequest {
     const payload: ChatCompletionRequest = {
       model: options.model,
       messages,
@@ -59,22 +62,26 @@ export function useChatStream() {
     try {
       if (options.stream) {
         let started = false
-        await streamChatCompletion(buildPayload(options, messages), {
-          onContent: (delta) => {
-            assistant.content += delta
-            if (!started) {
-              started = true
-              statusText.value = '接收中'
-            }
+        await streamChatCompletion(
+          buildPayload(options, messages),
+          {
+            onContent: (delta) => {
+              assistant.content += delta
+              if (!started) {
+                started = true
+                statusText.value = '接收中'
+              }
+            },
+            onReasoning: (delta) => {
+              assistant.reasoning = (assistant.reasoning ?? '') + delta
+              if (!started) {
+                started = true
+                statusText.value = '接收中'
+              }
+            },
           },
-          onReasoning: (delta) => {
-            assistant.reasoning = (assistant.reasoning ?? '') + delta
-            if (!started) {
-              started = true
-              statusText.value = '接收中'
-            }
-          },
-        }, controller.signal)
+          controller.signal,
+        )
 
         if (!assistant.content && !assistant.reasoning) {
           assistant.content = '（模型沒有回傳內容）'
@@ -89,7 +96,9 @@ export function useChatStream() {
         if (!assistant.content && !assistant.reasoning) {
           assistant.content = '（模型沒有回傳內容）'
         }
-        statusText.value = data.usage?.total_tokens ? `完成 · ${data.usage.total_tokens} tokens` : '完成'
+        statusText.value = data.usage?.total_tokens
+          ? `完成 · ${data.usage.total_tokens} tokens`
+          : '完成'
       }
     } catch (e) {
       if (e instanceof ApiError && e.code === 'ABORTED') {

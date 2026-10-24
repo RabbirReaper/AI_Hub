@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 語音轉文字面板：影片先在本機抽音軌再上傳，轉寫結果可選擇性轉繁體。
 import { ref } from 'vue'
 import { useModelSelect } from '@/composables/useModelSelect'
 import { usePanelStatus } from '@/composables/usePanelStatus'

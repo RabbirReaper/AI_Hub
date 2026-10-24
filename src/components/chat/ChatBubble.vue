@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 單則對話訊息氣泡，依 role 決定顯示標籤與配色。
 import { computed } from 'vue'
 import type { ThreadMessage } from '@/types/chat'
 
@@ -22,11 +23,21 @@ const bubbleClass = computed(() => {
 <template>
   <div class="flex flex-col gap-1.5">
     <div class="font-mono text-[10.5px] tracking-wider text-ink-faint uppercase">{{ label }}</div>
-    <details v-if="message.reasoning" class="rounded-control border border-dashed border-line bg-surface-sunken px-2.5 py-2 text-[12.5px] text-ink-soft">
-      <summary class="cursor-pointer font-mono text-[11px] tracking-wider text-ink-faint uppercase">思考過程</summary>
-      <div class="mt-1.5 leading-relaxed whitespace-pre-wrap opacity-85">{{ message.reasoning }}</div>
+    <details
+      v-if="message.reasoning"
+      class="rounded-control border border-dashed border-line bg-surface-sunken px-2.5 py-2 text-[12.5px] text-ink-soft"
+    >
+      <summary class="cursor-pointer font-mono text-[11px] tracking-wider text-ink-faint uppercase">
+        思考過程
+      </summary>
+      <div class="mt-1.5 leading-relaxed whitespace-pre-wrap opacity-85">
+        {{ message.reasoning }}
+      </div>
     </details>
-    <div class="rounded-bubble px-3.5 py-2.5 leading-relaxed whitespace-pre-wrap break-words" :class="bubbleClass">
+    <div
+      class="rounded-bubble px-3.5 py-2.5 leading-relaxed whitespace-pre-wrap break-words"
+      :class="bubbleClass"
+    >
       {{ message.content }}
     </div>
   </div>

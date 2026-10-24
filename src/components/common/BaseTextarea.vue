@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 通用多行輸入框，code 為 true 時切換等寬字體（給貼程式碼/JSON 的輸入用）。
 withDefaults(
   defineProps<{
     modelValue: string

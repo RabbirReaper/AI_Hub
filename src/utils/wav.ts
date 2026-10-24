@@ -56,7 +56,9 @@ export async function extractAudioTrack(file: File): Promise<Blob> {
     const decoded = await ctx.decodeAudioData(buf)
     return encodeWav(decoded)
   } catch {
-    throw new Error('無法從這個檔案取出音軌，可能是編碼格式瀏覽器不支援。請先轉成 mp3 或 wav 再上傳。')
+    throw new Error(
+      '無法從這個檔案取出音軌，可能是編碼格式瀏覽器不支援。請先轉成 mp3 或 wav 再上傳。',
+    )
   } finally {
     await ctx.close()
   }

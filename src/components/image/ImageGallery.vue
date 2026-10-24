@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 生成結果縮圖牆，每張圖搭配 prompt/size/model 作為 figcaption。
 import { imageSrcOf } from '@/utils/image'
 import type { GeneratedImage } from '@/types/image'
 
@@ -20,7 +21,9 @@ defineProps<{
         loading="lazy"
         class="block w-full rounded-lg border border-line bg-surface-sunken"
       />
-      <figcaption class="font-mono text-[11.5px] text-ink-faint">{{ size }} · {{ model }}</figcaption>
+      <figcaption class="font-mono text-[11.5px] text-ink-faint">
+        {{ size }} · {{ model }}
+      </figcaption>
     </figure>
   </div>
 </template>

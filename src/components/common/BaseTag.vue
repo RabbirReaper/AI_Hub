@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 小標籤，用於端點標示等短文字裝飾。
 withDefaults(
   defineProps<{
     variant?: 'accent' | 'warm'

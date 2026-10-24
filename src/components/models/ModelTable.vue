@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 模型清單表格，直接讀 models store（ModelsView 是全專案唯一不走 usePanelStatus 的 view）。
 import { useModelsStore } from '@/stores/models'
 import { categoryOf } from '@/utils/modelCategory'
 import { CATEGORY_LABEL } from '@/constants/modelCategory'

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// BaseScoreBar 清單外殼，embed 的兩兩相似度、rerank 的排序結果共用。
 import BaseScoreBar from './BaseScoreBar.vue'
 
 defineProps<{

@@ -5,7 +5,7 @@ export function toTraditional(input: string): string {
   let out = ''
   for (const ch of input) {
     const idx = SIMPLIFIED_CHARS.indexOf(ch)
-    out += idx >= 0 ? TRADITIONAL_CHARS[idx] ?? ch : ch
+    out += idx >= 0 ? (TRADITIONAL_CHARS[idx] ?? ch) : ch
   }
   return out
 }
