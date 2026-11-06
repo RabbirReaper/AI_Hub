@@ -46,6 +46,20 @@ const language = ref<AsrLanguage>(ASR_DEFAULT_LANGUAGE)
 const toTraditionalOn = ref(true)
 const transcript = ref('')
 const meta = ref('')
+const copied = ref(false)
+let copiedTimer: ReturnType<typeof setTimeout> | undefined
+
+async function handleCopy(): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(transcript.value)
+    copied.value = true
+    clearTimeout(copiedTimer)
+    copiedTimer = setTimeout(() => (copied.value = false), 1500)
+  } catch {
+    // 非安全來源或使用者拒絕權限時無法寫入剪貼簿，改以文字提示
+    window.alert('無法寫入剪貼簿，請手動選取文字複製。')
+  }
+}
 
 function renderTranscript(text: string): string {
   return toTraditionalOn.value ? toTraditional(text) : text
@@ -162,7 +176,11 @@ async function handleRun(): Promise<void> {
     <BaseErrorBox v-if="status === 'err' && errorMessage" :message="errorMessage" />
 
     <template v-if="transcript || (status === 'ok' && meta)">
-      <BaseResultHead title="轉寫結果" :meta="meta" />
+      <BaseResultHead title="轉寫結果" :meta="meta">
+        <BaseButton variant="ghost" :disabled="!transcript" @click="handleCopy">
+          {{ copied ? '已複製' : '複製' }}
+        </BaseButton>
+      </BaseResultHead>
       <BaseCodeBlock :content="transcript" />
     </template>
   </ConsolePanel>
